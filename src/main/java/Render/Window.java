@@ -1,13 +1,11 @@
 package Render;
 
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryUtil;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFWErrorCallback.createPrint;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL.*;
 import Math.Matrix4f;
@@ -36,19 +34,16 @@ public class Window {
        """;
 
 
-    private String title;
+    private final String title;
 
     private int width, height;
     private long window;
-
-    private boolean resize;
     private final boolean vSync;
 
     private boolean isFullscreen = false;
     private int windowedWidth, windowedHeight;
     private int windowedPosX, windowedPosY;
     private Shader shader;
-    private Matrix4f projectionMatrix;
 
     public Window(String title, int width, int height, boolean vSync) {
         this.vSync = vSync;
@@ -60,11 +55,8 @@ public class Window {
     }
 
     public void init(){
-        createPrint(System.err).set();
-        createCapabilities();
-        if (glGetString(GL_VERSION) == null) {
-            throw new RuntimeException("Failed to initialize OpenGL context");
-        }
+        // Configuration des callbacks d'erreur
+        GLFWErrorCallback.createPrint(System.err).set();
 
         if(!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -73,7 +65,8 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // Changé de 2 à 3
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
         boolean maximised = false;
@@ -88,44 +81,46 @@ public class Window {
         if(window == MemoryUtil.NULL)
             throw new RuntimeException("Failed to create GLFW window");
 
+        // Définir le contexte AVANT createCapabilities()
+        glfwMakeContextCurrent(window);
+
+        // MAINTENANT on peut créer les capacités OpenGL
+        createCapabilities();
+
+        // Vérification que OpenGL fonctionne
+        if (glGetString(GL_VERSION) == null) {
+            throw new RuntimeException("Failed to initialize OpenGL context");
+        }
+
+        // Callbacks après avoir créé le contexte
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             this.width = width;
             this.height = height;
-            this.setResize(true);
-            // Mise à jour de la projection orthographique lors du redimensionnement
             setupOrthographicProjection();
         });
 
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if(key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true);
-
-            // Toggle fullscreen avec F11
             if(key == GLFW_KEY_F11 && action == GLFW_RELEASE)
                 toggleFullscreen();
         });
 
+        // Reste du code...
         if(maximised){
             glfwMaximizeWindow(window);
-        }else{
+        } else {
             GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
             assert vidMode != null;
             glfwSetWindowPos(window, (vidMode.width() - width) / 2,
                     (vidMode.height() - height) / 2);
         }
 
-        glfwMakeContextCurrent(window);
-
-        // Créer les capacités OpenGL - TRÈS IMPORTANT
-        createCapabilities();
-
         if(isvSync())
             glfwSwapInterval(1);
 
         glfwShowWindow(window);
-
         setupOpenGL2D();
-
     }
 
     private void toggleFullscreen() {
@@ -186,7 +181,7 @@ public class Window {
 
     private void setupOrthographicProjection() {
         // Créer la matrice de projection orthographique
-        projectionMatrix = Matrix4f.orthographic(0, width, height, 0, -1, 1);
+        Matrix4f projectionMatrix = Matrix4f.orthographic(0, width, height, 0, -1, 1);
 
         // Envoyer la matrice au shader
         shader.use();
@@ -222,29 +217,8 @@ public class Window {
         return glfwWindowShouldClose(window);
     }
 
-    public void setTitle(String newTitle){
-        this.title = newTitle;
-        glfwSetWindowTitle(window, newTitle);
-    }
-
     private boolean isvSync() {
         return vSync;
-    }
-
-    public boolean isResize(){
-        return resize;
-    }
-
-    public void setResize(boolean resize) {
-        this.resize = resize;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
 }
