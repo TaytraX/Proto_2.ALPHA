@@ -5,11 +5,36 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryUtil;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFWErrorCallback.createPrint;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL.*;
+import Math.Matrix4f;
 
 public class Window {
+
+    private static final String VERTEX_SHADER = """
+        #version 330 core
+        
+        layout(location = 0) in vec2 position;
+        
+        uniform mat4 projection;
+        
+        void main() {
+            gl_Position = projection * vec4(position, 0.0, 1.0);
+        }
+        """;
+    private static final String FRAGMENT_SHADER = """
+        #version 330 core
+
+        out vec4 fragColor;
+
+        void main() {
+            fragColor = vec4(1.0, 1.0, 1.0, 1.0); // Blanc
+        }
+       """;
+
 
     private String title;
 
@@ -22,6 +47,8 @@ public class Window {
     private boolean isFullscreen = false;
     private int windowedWidth, windowedHeight;
     private int windowedPosX, windowedPosY;
+    private Shader shader;
+    private Matrix4f projectionMatrix;
 
     public Window(String title, int width, int height, boolean vSync) {
         this.vSync = vSync;
@@ -33,7 +60,11 @@ public class Window {
     }
 
     public void init(){
-        GLFWErrorCallback.createPrint(System.err).set();
+        createPrint(System.err).set();
+        createCapabilities();
+        if (glGetString(GL_VERSION) == null) {
+            throw new RuntimeException("Failed to initialize OpenGL context");
+        }
 
         if(!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -136,17 +167,17 @@ public class Window {
 
 
     private void setupOpenGL2D() {
-        // Désactiver le test de profondeur (pas nécessaire en 2D)
+        // Désactiver le test de profondeur
         glDisable(GL_DEPTH_TEST);
 
-        // Activer le blending pour la transparence
+        // Activer le blending
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // Désactiver le culling des faces (pas utile en 2D)
-        glDisable(GL_CULL_FACE);
+        // Créer le shader
+        shader = new Shader(VERTEX_SHADER, FRAGMENT_SHADER, true);
 
-        // Configuration de la projection orthographique
+        // Configuration de la projection
         setupOrthographicProjection();
 
         // Couleur de fond
@@ -154,16 +185,13 @@ public class Window {
     }
 
     private void setupOrthographicProjection() {
-        // Configurer la matrice de projection orthographique
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
+        // Créer la matrice de projection orthographique
+        projectionMatrix = Matrix4f.orthographic(0, width, height, 0, -1, 1);
 
-        // Projection orthographique : (0,0) en haut à gauche, (width, height) en bas à droite
-        // Typique pour les jeux 2D comme Minecraft 2D
-        glOrtho(0, width, height, 0, -1, 1);
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        // Envoyer la matrice au shader
+        shader.use();
+        shader.setUniformMat4f("projection", projectionMatrix.getBuffer());
+        shader.stop();
 
         // Mise à jour du viewport
         glViewport(0, 0, width, height);
@@ -179,6 +207,10 @@ public class Window {
     }
 
     public void cleanup(){
+        if (shader != null) {
+            shader.cleanup();
+        }
+        glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
     }
 
