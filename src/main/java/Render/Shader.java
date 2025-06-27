@@ -28,7 +28,7 @@ public class Shader {
         }
     }
 
-    private void compile(String vertexSource, String fragmentSource) {
+    public void compile(String vertexSource, String fragmentSource) {
         // Compiler le vertex shader
         vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShaderID, vertexSource);
