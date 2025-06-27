@@ -11,8 +11,11 @@ public class Shader {
     private int vertexShaderID;
     private int fragmentShaderID;
 
-    public Shader(String vertexPath, String fragmentPath) {
+    public Shader(String shaderName) {
         try {
+            String vertexPath = "src/main/Ressources/shaders/" + shaderName + ".vs.glsl";
+            String fragmentPath = "src/main/Ressources/shaders/" + shaderName + ".fs.glsl";
+
             String vertexSource = new String(Files.readAllBytes(Paths.get(vertexPath)));
             String fragmentSource = new String(Files.readAllBytes(Paths.get(fragmentPath)));
 
