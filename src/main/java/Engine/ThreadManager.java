@@ -1,5 +1,7 @@
 package Engine;
 
+import Engine.World.*;
+import Entity.PlayerState;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,7 +22,8 @@ public class ThreadManager {
     public ThreadManager() {
 
         platformGenerationExecutor = Executors.newSingleThreadExecutor(r -> {
-            return new Thread(r);
+            Thread thread = new Thread(r);
+            return thread;
         });
 
         gameplayExecutor = Executors.newSingleThreadExecutor(r -> {
