@@ -5,7 +5,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadManager {
 
@@ -21,8 +20,7 @@ public class ThreadManager {
     public ThreadManager() {
 
         platformGenerationExecutor = Executors.newSingleThreadExecutor(r -> {
-            Thread thread = new Thread(r);
-            return thread;
+            return new Thread(r);
         });
 
         gameplayExecutor = Executors.newSingleThreadExecutor(r -> {
