@@ -11,16 +11,16 @@ public class ThreadManager {
 
     public static final AtomicReference<PlayerState> playerState  = new AtomicReference<>();
 
-    public static final BlockingDeque<WorldGenRequest> worldGenQueue = new LinkedBlockingQueue<>();
+    public static final BlockingDeque<PlatformGenRequest> platformGenQueue = new LinkedBlockingQueue<>();
     public static final BlockingDeque<GeneratedPlatforms> generatedPlatforms = new LinkedBlockingQueue<>();
 
 
-    public ExecutorService worldGenerationExecutor;
+    public ExecutorService platformGenerationExecutor;
     public ExecutorService gameplayExecutor;
 
     public ThreadManager() {
 
-        worldGenerationExecutor = Executors.newSingleThreadExecutor(r -> {
+        platformGenerationExecutor = Executors.newSingleThreadExecutor(r -> {
             Thread thread = new Thread(r);
             return thread;
         });
