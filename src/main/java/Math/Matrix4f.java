@@ -5,8 +5,8 @@ import java.nio.FloatBuffer;
 
 public class Matrix4f {
     public static final int SIZE = 4;
-    private float[][] matrix;
-    private FloatBuffer buffer = BufferUtils.createFloatBuffer(SIZE * SIZE);
+    private final float[][] matrix;
+    private final FloatBuffer buffer = BufferUtils.createFloatBuffer(SIZE * SIZE);
 
     public Matrix4f() {
         matrix = new float[SIZE][SIZE];

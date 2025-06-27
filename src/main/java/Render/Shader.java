@@ -1,12 +1,10 @@
 package Render;
 
-import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL11.*;
 
 public class Shader {
     private int programID;
