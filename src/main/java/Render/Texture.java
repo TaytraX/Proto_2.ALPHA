@@ -16,7 +16,7 @@ public class Texture {
     int width, height;
     private final List<Integer> textures = new ArrayList<>();
 
-    public Texture(String filename) throws Exception {
+    public Texture(String filename) {
         textureID = tryLoadTexture(filename);
         if (textureID == 0) {
             textureID = createDefaultTexture();
