@@ -1,4 +1,31 @@
 package Engine;
 
+import org.joml.Vector2f;
+
 public class physics {
+
+    public final float gravity = -9.81f;
+    public static final float airFriction = 0.001f;
+    public static final float groundFriction = 0.5f;
+
+    public Vector2f position;
+    public Vector2f velocity;
+    public boolean isground = false;
+
+
+    public physics(Vector2f position) {
+
+        this.position = new Vector2f(position);
+        this.velocity = new Vector2f(0, 0);
+
+    }
+
+    private void update(float deltaTime) {
+
+    }
+
+    public void checkAndResolveCollisions(Vector2f position) {
+
+    }
+
 }
