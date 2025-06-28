@@ -33,7 +33,7 @@ public class Texture {
     }
 
         try {
-            String texturePath = "src/main/resources/textures/" + filename + ".pnj";
+            String texturePath = "src/main/resources/textures/" + filename + ".jpg";
             String texture = new String(Files.readAllBytes(Paths.get(texturePath)));
             textureID = loadTexture(texture);
         } catch (IOException e) {
