@@ -26,19 +26,17 @@ public class Texture {
     public Texture(String filename) throws Exception {
         try {
         String texturePath = "src/main/resources/textures/" + filename + ".pnj";
-        String texture = new String(Files.readAllBytes(Paths.get(texturePath)));
-        textureID = loadTexture(texture);
+        textureID = loadTexture(texturePath);
     } catch (IOException e) {
         e.printStackTrace();
     }
 
         try {
             String texturePath = "src/main/resources/textures/" + filename + ".jpg";
-            String texture = new String(Files.readAllBytes(Paths.get(texturePath)));
-            textureID = loadTexture(texture);
-        } catch (IOException e) {
+            textureID = loadTexture(texturePath);
+    } catch (IOException e) {
             e.printStackTrace();
-        }
+    }
     }
 
 
@@ -72,7 +70,6 @@ public class Texture {
             GL11.glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
             STBImage.stbi_image_free(buffer);
-            GL11.glBindTexture(GL_TEXTURE_2D, textureID);
             return textureID;
 
     }
