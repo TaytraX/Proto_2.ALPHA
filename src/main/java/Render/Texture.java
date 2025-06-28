@@ -4,52 +4,99 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.stb.STBImage.stbi_load;
 
 public class Texture {
 
+    int textureID;
+    int width, height;
+    ByteBuffer pixels;
     private final List<Integer> textures = new ArrayList<>();
 
-    public Texture(String filename){
-        int width, height;
-        ByteBuffer pixels;
+    public Texture(String filename) throws Exception {
+        try {
+        String texturePath = "src/main/resources/textures/" + filename + ".pnj";
+        String texture = new String(Files.readAllBytes(Paths.get(texturePath)));
+        textureID = loadTexture(texture);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
 
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            ByteBuffer p = stack.malloc(4);
-
-            pixels = stbi_load(filename, w, h, p.asIntBuffer(), 4);
-            if(pixels == null)
-                throw new RuntimeException("Failed to load texture");
-            width = w.get(0);
-            height = h.get(0);
-            pixels = p.asReadOnlyBuffer();
-
+        try {
+            String texturePath = "src/main/resources/textures/" + filename + ".pnj";
+            String texture = new String(Files.readAllBytes(Paths.get(texturePath)));
+            textureID = loadTexture(texture);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-        int textureID = glGenTextures();
+
+    private int loadTexture(String filename) throws Exception {
+
+            int width, height;
+            ByteBuffer buffer;
+
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                IntBuffer w = stack.mallocInt(1);
+                IntBuffer h = stack.mallocInt(1);
+                IntBuffer comp = stack.mallocInt(1);
+
+                buffer = STBImage.stbi_load(filename, w, h, comp, 4);
+                if (buffer == null) {
+                    throw new Exception("Could not load file " + filename + " " + STBImage.stbi_failure_reason());
+                }
+
+                width = w.get();
+                height = h.get();
+            }
+
+            int textureID = GL11.glGenTextures();
+            textures.add(textureID);
+            GL11.glBindTexture(GL_TEXTURE_2D, textureID);
+            GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+            GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+
+            // Paramètres de filtrage
+            GL11.glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+            GL11.glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+            STBImage.stbi_image_free(buffer);
+            GL11.glBindTexture(GL_TEXTURE_2D, textureID);
+            return textureID;
+
+    }
+
+    public synchronized int createDefaultTexture() {
+        // Texture 2x2 pixels blancs
+        ByteBuffer data = org.lwjgl.BufferUtils.createByteBuffer(16);
+        for (int i = 0; i < 16; i++) {
+            data.put((byte) 255); // Blanc opaque
+        }
+        data.flip();
+
+        int textureID = GL11.glGenTextures();
         textures.add(textureID);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
-        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, pixels);
+        GL11.glBindTexture(GL_TEXTURE_2D, textureID);
+        GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL11.GL_RGBA, 2, 2, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
 
-        //paramètres de texture
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
-        STBImage.stbi_image_free(pixels);
+        return textureID;
     }
 
     public void cleanUp(){
-        for(int texture : textures){
-            GL11.glDeleteTextures(texture);
-        }
+        GL11.glDeleteTextures(textureID);
     }
 }
