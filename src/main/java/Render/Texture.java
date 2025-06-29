@@ -7,14 +7,11 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Texture {
 
     int textureID;
     int width, height;
-    private final List<Integer> textures = new ArrayList<>();
 
     public Texture(String filename) {
         textureID = tryLoadTexture(filename);
@@ -28,7 +25,7 @@ public class Texture {
 
         for (String ext : extensions) {
             try {
-                String path = "src/main/resources/textures/" + filename + ext;
+                String path = "src/main/Resources/textures/" + filename + ext;
                 return loadTexture(path);
             } catch (Exception e) {
                 // Continue avec l'extension suivante
@@ -56,7 +53,6 @@ public class Texture {
             }
 
             int textureID = GL11.glGenTextures();
-            textures.add(textureID);
             GL11.glBindTexture(GL_TEXTURE_2D, textureID);
             GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
             GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL11.GL_RGBA, this.width, this.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
@@ -79,7 +75,6 @@ public class Texture {
         data.flip();
 
         int textureID = GL11.glGenTextures();
-        textures.add(textureID);
         GL11.glBindTexture(GL_TEXTURE_2D, textureID);
         GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL11.GL_RGBA, 2, 2, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
 
@@ -93,9 +88,6 @@ public class Texture {
     }
 
     public void cleanUp(){
-
-        for (int texture : textures) {
-            GL11.glDeleteTextures(texture);
-        }
+            GL11.glDeleteTextures(textureID);
     }
 }

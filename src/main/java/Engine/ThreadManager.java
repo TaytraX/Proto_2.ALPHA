@@ -17,18 +17,11 @@ public class ThreadManager {
 
 
     public ExecutorService platformGenerationExecutor;
-    public ExecutorService gameplayExecutor;
 
     public ThreadManager() {
 
         platformGenerationExecutor = Executors.newSingleThreadExecutor(r -> {
             Thread thread = new Thread(r);
-            return thread;
-        });
-
-        gameplayExecutor = Executors.newSingleThreadExecutor(r -> {
-            Thread thread = new Thread(r);
-            thread.setDaemon(true);
             return thread;
         });
     }

@@ -41,9 +41,9 @@ public class Matrix4f {
 
     public FloatBuffer getBuffer() {
         buffer.clear();
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                buffer.put(matrix[j][i]); // Transposée pour OpenGL
+        for (int col = 0; col < SIZE; col++) {
+            for (int row = 0; row < SIZE; row++) {
+                buffer.put(matrix[row][col]); // Transposée pour OpenGL
             }
         }
         buffer.flip();
