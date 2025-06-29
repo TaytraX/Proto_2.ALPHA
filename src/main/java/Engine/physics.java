@@ -9,6 +9,7 @@ public class physics {
     public static final float groundFriction = 0.5f;
 
     public Vector2f position;
+    public Vector2f platforms;
     public Vector2f velocity;
     public boolean isground = false;
 
@@ -24,8 +25,9 @@ public class physics {
 
     }
 
-    public void checkAndResolveCollisions(Vector2f position) {
+    public void checkAndResolveCollisions(Vector2f position, Vector2f platforms) {
         this.position = position;
+        this.platforms = platforms;
 
         if(position == )
 
