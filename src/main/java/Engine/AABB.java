@@ -18,10 +18,10 @@ public class AABB {
     }
 
     public boolean collidesWith(AABB other) {
-        return getMaxX() >= getMinX() &&
-               getMinX() <= getMaxX() &&
-               getMaxY() >= getMinY() &&
-               getMinY() <= getMaxY();
+        return getMaxX() >= other.getMinX() &&
+               getMinX() <= other.getMaxX() &&
+               getMaxY() >= other.getMinY() &&
+               getMinY() <= other.getMaxY();
     }
 
     public Vector2f getPosition() {
