@@ -2,7 +2,7 @@ package Engine;
 
 import org.joml.Vector2f;
 
-public class physics {
+public class Physics {
 
     public final float gravity = -9.81f;
     public static final float airFriction = 0.001f;
@@ -14,7 +14,7 @@ public class physics {
     public boolean isground = false;
 
 
-    public physics(Vector2f position) {
+    public Physics(Vector2f position) {
 
         this.position = new Vector2f(position);
         this.velocity = new Vector2f(0, 0);
