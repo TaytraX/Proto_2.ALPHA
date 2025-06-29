@@ -21,7 +21,7 @@ public class Physics {
 
     }
 
-    private void update(float deltaTime) {
+    public void update(float deltaTime) {
 
         if(!isground) {
             velocity.y += gravity * deltaTime;
@@ -31,9 +31,7 @@ public class Physics {
 
     }
 
-    public void checkAndResolveCollisions(Vector2f position, Vector2f platforms) {
-        this.position = position;
-        this.platforms = platforms;
+    public void checkAndResolveCollisions() {
 
     }
 
