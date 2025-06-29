@@ -25,6 +25,9 @@ public class physics {
     }
 
     public void checkAndResolveCollisions(Vector2f position) {
+        this.position = position;
+
+        if(position == )
 
     }
 
