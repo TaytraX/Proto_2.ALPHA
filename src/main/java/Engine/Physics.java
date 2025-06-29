@@ -11,7 +11,7 @@ public class Physics {
     public Vector2f position;
     public Vector2f platforms;
     public Vector2f velocity;
-    public boolean isground = false;
+    public boolean isground = true;
 
 
     public Physics(Vector2f position) {
@@ -23,13 +23,17 @@ public class Physics {
 
     private void update(float deltaTime) {
 
+        if(!isground) {
+            velocity.y += gravity * deltaTime;
+        }
+        position.x += velocity.x * deltaTime;
+        position.y += velocity.y * deltaTime;
+
     }
 
     public void checkAndResolveCollisions(Vector2f position, Vector2f platforms) {
         this.position = position;
         this.platforms = platforms;
-
-        if(position == )
 
     }
 
