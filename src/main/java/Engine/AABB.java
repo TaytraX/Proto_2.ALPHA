@@ -33,19 +33,19 @@ public class AABB {
     }
 
     public float getMinX() {
-        return position.x - size.x/2;
+        return this.position.x - this.size.x/2;
     }
 
     public float getMaxX() {
-        return position.x + size.x/2;
+        return this.position.x + this.size.x/2;
     }
 
     public float getMinY() {
-        return position.y - size.y/2;
+        return this.position.y - this.size.y/2;
     }
 
     public float getMaxY() {
-        return position.y + size.y/2;
+        return this.position.y + this.size.y/2;
     }
 
 }
