@@ -18,13 +18,10 @@ public class AABB {
     }
 
     public boolean collidesWith(AABB other) {
-        if (position.x + size.x/2 >= other.position.x - other.size.x/2 &&
-                position.x - size.x/2 <= other.position.x + other.size.x/2 &&
-                position.y + size.y/2 >= other.position.y - other.size.y/2 &&
-                position.y - size.y/2 <= other.position.y + other.size.y/2) {
-            return true;
-        }
-        return false;
+        return getMaxX() >= getMinX() &&
+               getMinX() <= getMaxX() &&
+               getMaxY() >= getMinY() &&
+               getMinY() <= getMaxY();
     }
 
     public Vector2f getPosition() {
