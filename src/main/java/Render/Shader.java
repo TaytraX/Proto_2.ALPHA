@@ -85,7 +85,7 @@ public class Shader {
 
     public void createUniform(String name) {
         int location = glGetUniformLocation(programID, name);
-        if (location < -1) {
+        if (location < 0) {
             System.err.println("Uniform not found: " + name);
         }
         uniforms.put(name, location);
@@ -95,6 +95,7 @@ public class Shader {
         Integer location = uniforms.get(name);
         if (location == null) {
             System.err.println("Uniform not found: " + name);
+            glUniformMatrix4fv(location, false, matrix);
         }
     }
 
