@@ -31,8 +31,6 @@ public class Physics {
 
     }
 
-    public void checkAndResolveCollisions() {
 
-    }
 
 }
