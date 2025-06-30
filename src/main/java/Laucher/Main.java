@@ -5,9 +5,11 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Main {
 
+    public static Window window;
+
     public static void main(String[] args) {
         // Créer la fenêtre
-        Window window = new Window("Minecraft 2D", 1280, 720, true);
+        window = new Window("Minecraft 2D", 1280, 720, true);
 
         // Initialiser
         window.init();
@@ -21,5 +23,9 @@ public class Main {
         // Nettoyage
         window.cleanup();
         glfwTerminate();
+    }
+
+    public static Window getWindow() {
+        return window;
     }
 }

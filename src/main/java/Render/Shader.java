@@ -3,6 +3,8 @@ package Render;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -10,6 +12,8 @@ public class Shader {
     private int programID;
     private int vertexShaderID;
     private int fragmentShaderID;
+
+    private final Map<String, Integer> uniforms = new HashMap<>();
 
     public Shader(String shaderName) {
         try {
@@ -22,6 +26,16 @@ public class Shader {
             compile(vertexSource, fragmentSource);
         } catch (Exception e) {
             System.err.println("Erreur lors du chargement des shaders: " + e.getMessage());
+        }
+
+        if (shaderName.equals("background")) {
+            createUniform("time");
+            createUniform("resolution");
+        } else if (shaderName.equals("player")) {
+            createUniform("transformationMatrix");
+            createUniform("viewMatrix");
+            createUniform("projectionMatrix");
+            createUniform("textureSample");
         }
     }
 
@@ -69,17 +83,19 @@ public class Shader {
         }
     }
 
-    public void use() {
-        glUseProgram(programID);
-    }
-
-    public void stop() {
-        glUseProgram(0);
+    public void createUniform(String name) {
+        int location = glGetUniformLocation(programID, name);
+        if (location < -1) {
+            System.err.println("Uniform not found: " + name);
+        }
+        uniforms.put(name, location);
     }
 
     public void setUniformMat4f(String name, FloatBuffer matrix) {
-        int location = glGetUniformLocation(programID, name);
-        glUniformMatrix4fv(location, false, matrix);
+        Integer location = uniforms.get(name);
+        if (location == null) {
+            System.err.println("Uniform not found: " + name);
+        }
     }
 
     public void setUniform1i(String name, int value) {
@@ -92,8 +108,17 @@ public class Shader {
         glUniform1f(location, value);
     }
 
+    public void use() {
+        glUseProgram(programID);
+    }
+
+    public void stop() {
+        glUseProgram(0);
+    }
+
     public void cleanup() {
         stop();
+        uniforms.clear();
         glDetachShader(programID, vertexShaderID);
         glDetachShader(programID, fragmentShaderID);
         glDeleteShader(vertexShaderID);
