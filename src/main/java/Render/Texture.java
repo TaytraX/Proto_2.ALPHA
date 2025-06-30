@@ -90,4 +90,8 @@ public class Texture {
     public void cleanUp(){
             GL11.glDeleteTextures(textureID);
     }
+
+    public int getTextureID() {
+        return textureID;
+    }
 }
