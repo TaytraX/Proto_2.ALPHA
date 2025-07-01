@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.glUniformMatrix4fv;
 
 public class Shader {
     private int programID;
@@ -95,7 +96,9 @@ public class Shader {
         Integer location = uniforms.get(name);
         if (location == null) {
             System.err.println("Uniform not found: " + name);
+            return;
         }
+        glUniformMatrix4fv(location, false, matrix);
     }
 
     public void setUniform1i(String name, int value) {

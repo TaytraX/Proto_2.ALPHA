@@ -22,6 +22,12 @@ public class Renderer {
         RenderPlayer = new RenderPlayer();
     }
 
+    public void initialize() {
+        BackgroundRenderer.initialize();
+        PlatformRenderer.initialize();
+        RenderPlayer.initialize();
+    }
+
     public void renderFrame(Camera camera, float deltaTime){
         BackgroundRenderer.render(camera, deltaTime);
         PlatformRenderer.render(camera, deltaTime);

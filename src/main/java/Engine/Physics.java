@@ -4,14 +4,14 @@ import org.joml.Vector2f;
 
 public class Physics {
 
-    public final float gravity = -9.81f;
+    public static final float gravity = -9.81f;
     public static final float airFriction = 0.001f;
     public static final float groundFriction = 0.5f;
 
     public AABB position;
     public AABB platforms;
     public Vector2f velocity;
-    public boolean isground = true;
+    public boolean isgrounded = true;
 
 
     public Physics(AABB position, AABB platforms) {

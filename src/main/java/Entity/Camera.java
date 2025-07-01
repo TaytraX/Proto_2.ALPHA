@@ -1,5 +1,6 @@
 package Entity;
 
+import Engine.AABB;
 import Laucher.Main;
 import Math.Matrix4f;
 import org.joml.Vector2f;
@@ -10,8 +11,17 @@ public class Camera {
     private Vector2f position;
 
     public Camera() {
-        FOV = new Vector2f(((float) Main.getWidth() / 16), ((float) Main.getHeight() / 16));
-        position = new Vector2f(Player.getposition().getMinX(), Player.getposition().getMinY());
+        FOV = new Vector2f((Main.getWidth() / 16f), (Main.getHeight() / 16f));
+        position = new Vector2f(0, 0);
+    }
+
+    public void followPlayer() {
+        AABB playerPosition = Player.getposition();
+
+        this.position.set(
+                playerPosition.getMinX() + playerPosition.size().x,
+                playerPosition.getMinY() + playerPosition.size().y
+        );
     }
 
     public Matrix4f getProjectionMatrix() {
@@ -19,6 +29,6 @@ public class Camera {
     }
 
     public Matrix4f getViewMatrix() {
-        return Matrix4f.orthographic(0, Main.getWidth(), Main.getHeight(), 0, 0, 1);
+        return Matrix4f.translation(-position.x, -position.y, 0);
     }
 }
