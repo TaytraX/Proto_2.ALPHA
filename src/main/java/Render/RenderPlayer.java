@@ -29,7 +29,8 @@ public class RenderPlayer implements Renderable {
     public RenderPlayer() {
         window = Main.getWindow();
         Matrix4f transformationMatrix = Matrix4f.translation(
-                Player.getposition(),
+                Player.getposition().getMinX(),
+                Player.getposition().getMinY(),
                 0.0f
         );
         shader = new Shader("player");

@@ -9,9 +9,9 @@ public class Camera {
     private Vector2f FOV;
     private Vector2f position;
 
-    public Camera(int fov) {
-        this.FOV = new Vector2f(((float) Main.getWidth() / 16), ((float) Main.getHeight() / 16));
-        this.position = new Vector2f(Player.getposition().getMinX(), Player.getposition().getMinY());
+    public Camera() {
+        FOV = new Vector2f(((float) Main.getWidth() / 16), ((float) Main.getHeight() / 16));
+        position = new Vector2f(Player.getposition().getMinX(), Player.getposition().getMinY());
     }
 
     public Matrix4f getProjectionMatrix() {

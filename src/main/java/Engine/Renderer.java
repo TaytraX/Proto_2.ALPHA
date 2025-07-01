@@ -11,9 +11,9 @@ public class Renderer {
     private List<Renderable> renderers;
 
     public Window window;
-    private BackgroundRenderer BackgroundRenderer;
-    private PlatformRenderer PlatformRenderer;
-    private RenderPlayer RenderPlayer;
+    private final BackgroundRenderer BackgroundRenderer;
+    private final PlatformRenderer PlatformRenderer;
+    private final RenderPlayer RenderPlayer;
 
     public Renderer() {
         window = Main.getWindow();
