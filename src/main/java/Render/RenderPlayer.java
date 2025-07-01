@@ -24,12 +24,12 @@ public class RenderPlayer implements Renderable {
     private final Texture texture;
     private final Window window;
     private Camera camera;
-    private Player player;
 
-    public RenderPlayer(Shader shader, Texture texture) {
-        this.shader = shader;
-        this.texture = texture;
-        this.window = Main.getWindow();
+    public RenderPlayer() {
+        window = Main.getWindow();
+        shader = new Shader("player");
+        texture = new Texture("player");
+        initialize();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class RenderPlayer implements Renderable {
 
 
         FloatBuffer textureBuffer = org.lwjgl.BufferUtils.createFloatBuffer(textureCoords.length);
-        vertexBuffer.put(vertices).flip();
+        textureBuffer.put(textureCoords).flip();
 
         glBindVertexArray(VAO);
 
@@ -91,6 +91,18 @@ public class RenderPlayer implements Renderable {
 
     @Override
     public void render(Camera camera, float deltaTime) {
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
+
+        shader.use();
+        shader.setUniform1i("textureSample", 0);
+        shader.setUniformMat4f("transformationMatrix", Player.getTransformationMatrix().getBuffer());
+        shader.setUniformMat4f("projection", camera.getProjectionMatrix().getBuffer());
+        shader.setUniformMat4f("view", camera.getViewMatrix().getBuffer());
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
     }
 

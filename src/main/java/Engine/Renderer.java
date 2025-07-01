@@ -11,9 +11,15 @@ public class Renderer {
     private List<Renderable> renderers;
 
     public Window window;
+    private BackgroundRenderer BackgroundRenderer;
+    private PlatformRenderer PlatformRenderer;
+    private RenderPlayer RenderPlayer;
 
     public Renderer() {
         window = Main.getWindow();
+        BackgroundRenderer = new BackgroundRenderer();
+        PlatformRenderer = new PlatformRenderer();
+        RenderPlayer = new RenderPlayer();
     }
 
     public void renderFrame(Camera camera, float deltaTime){

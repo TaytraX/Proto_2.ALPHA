@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -18,6 +19,7 @@ public class Texture {
         if (textureID == 0) {
             textureID = createDefaultTexture();
         }
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     private int tryLoadTexture(String filename) {
@@ -53,7 +55,7 @@ public class Texture {
             }
 
             int textureID = GL11.glGenTextures();
-            GL11.glBindTexture(GL_TEXTURE_2D, textureID);
+            glBindTexture(GL_TEXTURE_2D, textureID);
             GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
             GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL11.GL_RGBA, this.width, this.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 
@@ -75,7 +77,7 @@ public class Texture {
         data.flip();
 
         int textureID = GL11.glGenTextures();
-        GL11.glBindTexture(GL_TEXTURE_2D, textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
         GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL11.GL_RGBA, 2, 2, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
 
         GL11.glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
