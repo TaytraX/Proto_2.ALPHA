@@ -102,7 +102,7 @@ public class RenderPlayer implements Renderable {
 
         shader.use();
         shader.setUniform1i("textureSample", 0);
-        shader.setUniformMat4f("transformationMatrix", Player.getTransformationMatrix().getBuffer());
+        shader.setUniformMat4f("transformationMatrix", transformationMatrix.getBuffer());
         shader.setUniformMat4f("projection", camera.getProjectionMatrix().getBuffer());
         shader.setUniformMat4f("view", camera.getViewMatrix().getBuffer());
         glBindVertexArray(VAO);

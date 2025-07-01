@@ -39,6 +39,14 @@ public class Matrix4f {
         return result;
     }
 
+    public static Matrix4f translation(float x, float y, float z) {
+        Matrix4f result = new Matrix4f();
+        result.matrix[3][0] = x;
+        result.matrix[3][1] = y;
+        result.matrix[3][2] = z;
+        return result;
+    }
+
     public FloatBuffer getBuffer() {
         buffer.clear();
         for (int col = 0; col < SIZE; col++) {
