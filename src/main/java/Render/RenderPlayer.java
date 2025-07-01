@@ -5,6 +5,7 @@ import Entity.Camera;
 import Entity.Player;
 import Laucher.Main;
 import org.lwjgl.opengl.GL30C;
+import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -47,10 +48,16 @@ public class RenderPlayer implements Renderable {
                 0.4f,  -0.6f   // Bas droit
         };
 
+        FloatBuffer vertexBuffer = org.lwjgl.BufferUtils.createFloatBuffer(vertices.length);
+        vertexBuffer.put(vertices).flip();
+
         int[] indices = {
                 0, 1, 3,  // Premier triangle
                 3, 1, 2   // Deuxième triangle
         };
+
+        IntBuffer indexBuffer = org.lwjgl.BufferUtils.createIntBuffer(indices.length);
+        indexBuffer.put(indices).flip();
 
         float[] textureCoords = {
                 0.0f, 1.0f,  // Bas gauche -> correspond au haut de l'image
@@ -59,23 +66,26 @@ public class RenderPlayer implements Renderable {
                 1.0f, 1.0f   // Bas droit -> correspond au haut de l'image
         };
 
+
+        FloatBuffer textureBuffer = org.lwjgl.BufferUtils.createFloatBuffer(textureCoords.length);
+        vertexBuffer.put(vertices).flip();
+
         glBindVertexArray(VAO);
 
         glBindBuffer(GL30C.GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL30C.GL_ARRAY_BUFFER, vertices, GL30C.GL_STATIC_DRAW);
-
+        glBufferData(GL30C.GL_ARRAY_BUFFER, vertexBuffer, GL30C.GL_STATIC_DRAW);
         glVertexAttribPointer(0, 2, GL30C.GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(0);
 
-        glBindBuffer(GL30C.GL_ARRAY_BUFFER, EBO);
-        glBufferData(GL30C.GL_ARRAY_BUFFER, indices, GL30C.GL_STATIC_DRAW);
-
         glBindBuffer(GL30C.GL_ARRAY_BUFFER, textureVBO);
-        glBufferData(GL30C.GL_ARRAY_BUFFER, textureCoords, GL30C.GL_STATIC_DRAW);
+        glBufferData(GL30C.GL_ARRAY_BUFFER, textureBuffer, GL30C.GL_STATIC_DRAW);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+        glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL30C.GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL30C.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL30C.GL_STATIC_DRAW);;
 
         glBindVertexArray(0);
-        glBindBuffer(GL30C.GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL30C.GL_ELEMENT_ARRAY_BUFFER, 0);
 
     }
 
