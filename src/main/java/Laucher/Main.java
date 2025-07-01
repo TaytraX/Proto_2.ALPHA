@@ -7,9 +7,12 @@ public class Main {
 
     public static Window window;
 
+    public static int width = 1280;
+    public static int height = 800;
+
     public static void main(String[] args) {
         // Créer la fenêtre
-        window = new Window("Minecraft 2D", 1280, 720, true);
+        window = new Window("Minecraft 2D", width, height, true);
 
         // Initialiser
         window.init();
@@ -27,5 +30,13 @@ public class Main {
 
     public static Window getWindow() {
         return window;
+    }
+
+    public static int getWidth() {
+        return width;
+    }
+
+    public static int getHeight() {
+        return height;
     }
 }
