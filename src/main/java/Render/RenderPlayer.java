@@ -5,7 +5,7 @@ import Entity.Camera;
 import Entity.Player;
 import Laucher.Main;
 import org.lwjgl.opengl.GL30C;
-import org.lwjgl.BufferUtils;
+import Math.Matrix4f;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -23,10 +23,15 @@ public class RenderPlayer implements Renderable {
     private final Shader shader;
     private final Texture texture;
     private final Window window;
+    Matrix4f transformationMatrix;
     private Camera camera;
 
     public RenderPlayer() {
         window = Main.getWindow();
+        Matrix4f transformationMatrix = Matrix4f.translation(
+                Player.getposition(),
+                0.0f
+        );
         shader = new Shader("player");
         texture = new Texture("player");
         initialize();
