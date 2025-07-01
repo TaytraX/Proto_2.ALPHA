@@ -95,7 +95,6 @@ public class Shader {
         Integer location = uniforms.get(name);
         if (location == null) {
             System.err.println("Uniform not found: " + name);
-            glUniformMatrix4fv(location, false, matrix);
         }
     }
 

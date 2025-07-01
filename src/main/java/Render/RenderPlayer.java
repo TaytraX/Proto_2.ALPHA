@@ -1,5 +1,6 @@
 package Render;
 
+import Engine.AABB;
 import Engine.Renderable;
 import Entity.Camera;
 import Entity.Player;
@@ -28,11 +29,6 @@ public class RenderPlayer implements Renderable {
 
     public RenderPlayer() {
         window = Main.getWindow();
-        Matrix4f transformationMatrix = Matrix4f.translation(
-                Player.getposition().getMinX(),
-                Player.getposition().getMinY(),
-                0.0f
-        );
         shader = new Shader("player");
         texture = new Texture("player");
         initialize();
@@ -97,6 +93,13 @@ public class RenderPlayer implements Renderable {
 
     @Override
     public void render(Camera camera, float deltaTime) {
+
+        AABB playerAABB = Player.getposition();
+        transformationMatrix = Matrix4f.translation(
+                playerAABB.getMinX() + playerAABB.size().x,  // Centre X
+                playerAABB.getMinY() + playerAABB.size().y,  // Centre Y
+                0.0f
+        );
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
