@@ -9,6 +9,8 @@ public class Camera {
 
     private Vector2f FOV;
     private Vector2f position;
+    private final Matrix4f projectionMatrix = new Matrix4f();
+    private final Matrix4f viewMatrix = new Matrix4f();
 
     public Camera() {
         FOV = new Vector2f((Main.getWidth() / 16f), (Main.getHeight() / 16f));
@@ -25,10 +27,10 @@ public class Camera {
     }
 
     public Matrix4f getProjectionMatrix() {
-        return Matrix4f.orthographic(0, Main.getWidth(), Main.getHeight(), 0, 0, 1);
+        return projectionMatrix.identity().ortho(0, Main.getWidth(), 0, Main.getHeight(), 0, 1);
     }
 
     public Matrix4f getViewMatrix() {
-        return Matrix4f.translation(-position.x, -position.y, 0);
+        return viewMatrix.identity().translation(-position.x, -position.y, 0);
     }
 }

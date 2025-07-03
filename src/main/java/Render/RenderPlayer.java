@@ -5,6 +5,7 @@ import Engine.Renderable;
 import Entity.Camera;
 import Entity.Player;
 import Laucher.Main;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
 
 import java.nio.FloatBuffer;
@@ -15,10 +16,16 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30C.glBindBuffer;
+import static org.lwjgl.opengl.GL30C.glBufferData;
+import static org.lwjgl.opengl.GL30C.glGenBuffers;
+import static org.lwjgl.opengl.GL30C.glBindTexture;
 
 public class RenderPlayer implements Renderable {
 
     private int VAO, VBO, EBO, textureVBO;
+
+    private final FloatBuffer matrixBuffer = org.lwjgl.BufferUtils.createFloatBuffer(16);
 
     private final Shader shader;
     private final Texture texture;
@@ -94,20 +101,30 @@ public class RenderPlayer implements Renderable {
     public void render(Camera camera, float deltaTime) {
 
         AABB playerAABB = Player.getposition();
-        transformationMatrix = Matrix4f.translation(
-                playerAABB.getMinX() + playerAABB.size().x,  // Centre X
-                playerAABB.getMinY() + playerAABB.size().y,  // Centre Y
-                0.0f
-        );
+        transformationMatrix = new Matrix4f()
+                .translation(
+                        playerAABB.getMinX() + playerAABB.size().x,
+                        playerAABB.getMinY() + playerAABB.size().y,
+                        0.0f
+                );
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
 
         shader.use();
-        shader.setUniform1i("textureSample", 0);
-        shader.setUniformMat4f("transformationMatrix", transformationMatrix.getBuffer());
-        shader.setUniformMat4f("projectionMatrix", camera.getProjectionMatrix().getBuffer());
-        shader.setUniformMat4f("viewMatrix", camera.getViewMatrix().getBuffer());
+
+        matrixBuffer.clear();
+        transformationMatrix.get(matrixBuffer);
+        shader.setUniformMat4f("transformationMatrix", matrixBuffer);
+
+        matrixBuffer.clear();
+        camera.getProjectionMatrix().get(matrixBuffer);
+        shader.setUniformMat4f("projectionMatrix", matrixBuffer);
+
+        matrixBuffer.clear();
+        camera.getViewMatrix().get(matrixBuffer);
+        shader.setUniformMat4f("viewMatrix", matrixBuffer);
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
