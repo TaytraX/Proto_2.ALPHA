@@ -6,7 +6,6 @@ import Entity.Camera;
 import Entity.Player;
 import Laucher.Main;
 import org.lwjgl.opengl.GL30C;
-import Math.Matrix4f;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

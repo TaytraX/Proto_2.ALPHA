@@ -8,31 +8,8 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL.*;
-import Math.Matrix4f;
 
 public class Window {
-
-    private static final String VERTEX_SHADER = """
-        #version 330 core
-        
-        layout(location = 0) in vec2 position;
-        
-        uniform mat4 projection;
-        
-        void main() {
-            gl_Position = projection * vec4(position, 0.0, 1.0);
-        }
-        """;
-    private static final String FRAGMENT_SHADER = """
-        #version 330 core
-
-        out vec4 fragColor;
-
-        void main() {
-            fragColor = vec4(1.0, 1.0, 1.0, 1.0); // Blanc
-        }
-       """;
-
 
     private final String title;
 
@@ -43,7 +20,6 @@ public class Window {
     private boolean isFullscreen = false;
     private int windowedWidth, windowedHeight;
     private int windowedPosX, windowedPosY;
-    private Shader shader;
 
     public Window(String title, int width, int height, boolean vSync) {
         this.vSync = vSync;
@@ -96,7 +72,6 @@ public class Window {
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             this.width = width;
             this.height = height;
-            setupOrthographicProjection();
         });
 
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
@@ -120,7 +95,6 @@ public class Window {
             glfwSwapInterval(1);
 
         glfwShowWindow(window);
-        setupOpenGL2D();
     }
 
     private void toggleFullscreen() {
@@ -160,38 +134,6 @@ public class Window {
             glfwSwapInterval(1);
     }
 
-
-    private void setupOpenGL2D() {
-        // Désactiver le test de profondeur
-        glDisable(GL_DEPTH_TEST);
-
-        // Activer le blending
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        // Créer le shader
-        shader = new Shader(VERTEX_SHADER, FRAGMENT_SHADER, true);
-
-        // Configuration de la projection
-        setupOrthographicProjection();
-
-        // Couleur de fond
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    }
-
-    private void setupOrthographicProjection() {
-        // Créer la matrice de projection orthographique
-        Matrix4f projectionMatrix = Matrix4f.orthographic(0, width, height, 0, -1, 1);
-
-        // Envoyer la matrice au shader
-        shader.use();
-        shader.setUniformMat4f("projection", projectionMatrix.getBuffer());
-        shader.stop();
-
-        // Mise à jour du viewport
-        glViewport(0, 0, width, height);
-    }
-
     public void update() {
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -202,15 +144,8 @@ public class Window {
     }
 
     public void cleanup(){
-        if (shader != null) {
-            shader.cleanup();
-        }
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
-    }
-
-    public boolean isKeyPressed(int keycode){
-        return glfwGetKey(window, keycode) == GLFW_PRESS;
     }
 
     public boolean windowShouldClose(){
