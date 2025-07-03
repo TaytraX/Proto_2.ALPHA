@@ -35,5 +35,8 @@ public class Renderer {
     }
 
     public void cleanUp() {
+        BackgroundRenderer.cleanup();
+        PlatformRenderer.cleanup();
+        RenderPlayer.cleanup();
     }
 }

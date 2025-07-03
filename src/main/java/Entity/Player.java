@@ -11,4 +11,10 @@ public class Player {
         return position;
     }
 
+    public void input() {
+    }
+
+    public void update(float deltaTime) {
+    }
+
 }

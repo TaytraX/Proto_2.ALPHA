@@ -27,6 +27,7 @@ public class Shader {
             compile(vertexSource, fragmentSource);
         } catch (Exception e) {
             System.err.println("Erreur lors du chargement des shaders: " + e.getMessage());
+            loadDefaultShader();
         }
 
         if (shaderName.equals("background")) {
@@ -109,6 +110,19 @@ public class Shader {
     public void setUniform1f(String name, float value) {
         int location = glGetUniformLocation(programID, name);
         glUniform1f(location, value);
+    }
+
+    private void loadDefaultShader() {
+        // Crée un shader par défaut en hardcoded
+        String defaultVertex = "#version 330 core\n" +
+                "in vec3 position;\n" +
+                "void main() { gl_Position = vec4(position, 1.0); }";
+
+        String defaultFragment = "#version 330 core\n" +
+                "out vec4 fragColor;\n" +
+                "void main() { fragColor = vec4(1.0, 0.0, 1.0, 1.0); }"; // Rose shocking
+
+        compile(defaultVertex, defaultFragment);
     }
 
     public void use() {

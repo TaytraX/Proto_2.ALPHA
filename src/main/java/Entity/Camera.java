@@ -27,7 +27,13 @@ public class Camera {
     }
 
     public Matrix4f getProjectionMatrix() {
-        return projectionMatrix.identity().ortho(0, Main.getWidth(), 0, Main.getHeight(), 0, 1);
+        float worldWidth = 40.0f;  // 40 unités monde
+        float worldHeight = 25.0f; // 25 unités monde
+        return projectionMatrix.identity().ortho(
+                -worldWidth/2, worldWidth/2,
+                -worldHeight/2, worldHeight/2,
+                0, 1
+        );
     }
 
     public Matrix4f getViewMatrix() {
