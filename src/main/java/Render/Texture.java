@@ -27,7 +27,7 @@ public class Texture {
 
         for (String ext : extensions) {
             try {
-                String path = "src/main/Resources/textures/" + filename + ext;
+                String path = "src/main/Ressources/textures/" + filename + ext;
                 return loadTexture(path);
             } catch (Exception e) {
                 // Continue avec l'extension suivante
