@@ -2,9 +2,9 @@ package Render;
 
 import Engine.AABB;
 import Engine.Renderable;
-import Entity.Camera;
-import Entity.Player;
+import disable.Entity.Camera;
 import Laucher.Main;
+import disable.Player;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
 
@@ -100,7 +100,7 @@ public class RenderPlayer implements Renderable {
     @Override
     public void render(Camera camera, float deltaTime) {
 
-        AABB playerAABB = Player.getposition();
+        AABB playerAABB = disable.Player.getposition();
         transformationMatrix = new Matrix4f()
                 .translation(
                         playerAABB.getMinX() + playerAABB.size().x,

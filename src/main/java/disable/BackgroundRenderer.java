@@ -1,7 +1,7 @@
-package Render;
+package disable;
 
 import Engine.Renderable;
-import Entity.Camera;
+import disable.Entity.Camera;
 
 public class BackgroundRenderer implements Renderable {
     @Override

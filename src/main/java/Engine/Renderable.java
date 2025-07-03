@@ -1,6 +1,6 @@
 package Engine;
 
-import Entity.Camera;
+import disable.Entity.Camera;
 
 public interface Renderable {
     void initialize();
