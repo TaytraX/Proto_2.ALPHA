@@ -1,14 +1,14 @@
-package disable;
+package Engine;
 
-import disable.World.*;
-import disable.PlayerState;
+import Engine.World.*;
+import Entity.PlayerState;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ThreadManager {
 
-    public static final AtomicReference<disable.PlayerState> playerState  = new AtomicReference<>();
+    public static final AtomicReference<PlayerState> playerState  = new AtomicReference<>();
 
     public static final BlockingDeque<PlatformGenRequest> platformGenQueue = new LinkedBlockingDeque<>();
     public static final BlockingDeque<GeneratedPlatforms> generatedPlatforms = new LinkedBlockingDeque<>();

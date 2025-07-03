@@ -1,8 +1,8 @@
-package disable;
+package Render;
 
 import Engine.Renderable;
-import disable.Entity.Camera;
-@disable
+import Entity.Camera;
+
 public class PlatformRenderer implements Renderable {
     @Override
     public void initialize() {

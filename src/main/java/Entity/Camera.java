@@ -1,8 +1,7 @@
-package disable.Entity;
+package Entity;
 
 import Engine.AABB;
 import Laucher.Main;
-import disable.Player;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 

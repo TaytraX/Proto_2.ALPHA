@@ -1,10 +1,8 @@
 package Engine;
 
-import disable.BackgroundRenderer;
-import disable.Entity.Camera;
+import Entity.Camera;
 import Laucher.Main;
 import Render.*;
-import disable.PlatformRenderer;
 
 import java.util.List;
 

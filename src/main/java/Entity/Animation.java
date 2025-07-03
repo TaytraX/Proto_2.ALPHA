@@ -1,4 +1,4 @@
-package disable;
+package Entity;
 
 public class Animation {
 }

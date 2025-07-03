@@ -1,4 +1,4 @@
-package disable.Entity;
+package Entity;
 
 import Engine.AABB;
 import org.joml.Vector2f;

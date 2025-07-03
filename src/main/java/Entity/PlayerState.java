@@ -1,4 +1,4 @@
-package disable.Entity;
+package Entity;
 
 public class PlayerState {
 }
