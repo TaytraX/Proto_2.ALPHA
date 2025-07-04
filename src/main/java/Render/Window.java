@@ -156,4 +156,8 @@ public class Window {
         return vSync;
     }
 
+    public long getWindowHandle() {
+        return window; // La variable long window de ta classe
+    }
+
 }

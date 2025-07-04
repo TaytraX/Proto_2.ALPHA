@@ -6,23 +6,32 @@ import Render.Window;
 import org.joml.Vector2f;
 
 import static Laucher.Main.window;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.glfwGetKey;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Player {
-    private final AABB position = new AABB(new Vector2f(0, 0), new Vector2f(1, 1));
-    public Window window;
+    private final static AABB position = new AABB(new Vector2f(0, 0), new Vector2f(1, 1));
+    public long windowId;
 
-
-    public AABB getposition(){
-        return position;
+    public Player() {
+        windowId = Main.getWindow().getWindowHandle();
     }
 
     public void input() {
-        glfwGetKey(window, GLFW_KEY_SPACE);
+        // Détection des touches
+        boolean leftPressed = glfwGetKey(windowId, GLFW_KEY_A) == GLFW_PRESS;
+        boolean rightPressed = glfwGetKey(windowId, GLFW_KEY_D) == GLFW_PRESS;
+        boolean jumpPressed = glfwGetKey(windowId, GLFW_KEY_SPACE) == GLFW_PRESS;
+    }
+
+    private AnimationState determineAnimationState() {
+
     }
 
     public void update(float deltaTime) {
+    }
+
+    public static AABB getposition(){
+        return position;
     }
 
 }
