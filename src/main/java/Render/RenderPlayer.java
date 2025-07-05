@@ -102,9 +102,17 @@ public class RenderPlayer implements Renderable, PlayerStateObserver {
 
     @Override
     public void render(Camera camera, float deltaTime) {
-        if (lastKnownState == null) return;
-        // ✅ Rendu basé sur l'état réel
-        Vector2f position = lastKnownState.position();
+
+        PlayerState currentState = ThreadManager.playerState.get();
+        if(currentState == null) return;
+
+        AABB playerAABB = currentState.getAABB();
+        transformationMatrix = new Matrix4f()
+                .translation(
+                        playerAABB.getMinX() + playerAABB.size().x,
+                        playerAABB.getMinY() + playerAABB.size().y,
+                        0.0f
+                );
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
