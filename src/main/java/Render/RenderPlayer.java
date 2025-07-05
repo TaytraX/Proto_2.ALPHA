@@ -2,9 +2,11 @@ package Render;
 
 import Engine.AABB;
 import Engine.Renderable;
+import Engine.ThreadManager;
 import Entity.AnimationState;
 import Entity.Camera;
 import Entity.Player;
+import Entity.PlayerState;
 import Laucher.Main;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -23,7 +25,7 @@ import static org.lwjgl.opengl.GL30C.glBufferData;
 import static org.lwjgl.opengl.GL30C.glGenBuffers;
 import static org.lwjgl.opengl.GL30C.glBindTexture;
 
-public class RenderPlayer implements Renderable {
+public class RenderPlayer implements Renderable, PlayerStateObserver {
 
     private int VAO, VBO, EBO, textureVBO;
 
@@ -34,6 +36,7 @@ public class RenderPlayer implements Renderable {
     private final Window window;
     Matrix4f transformationMatrix;
     private Camera camera;
+    private PlayerState lastKnownState;
 
     public RenderPlayer() {
         window = Main.getWindow();
@@ -101,14 +104,9 @@ public class RenderPlayer implements Renderable {
 
     @Override
     public void render(Camera camera, float deltaTime) {
-
-        AABB playerAABB = new AABB(new Vector2f(0, 0), new Vector2f(1, 1));
-        transformationMatrix = new Matrix4f()
-                .translation(
-                        playerAABB.getMinX() + playerAABB.size().x,
-                        playerAABB.getMinY() + playerAABB.size().y,
-                        0.0f
-                );
+        if (lastKnownState == null) return;
+        // ✅ Rendu basé sur l'état réel
+        Vector2f position = lastKnownState.position();
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
@@ -131,6 +129,11 @@ public class RenderPlayer implements Renderable {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
+    }
+
+    @Override
+    public void onPlayerStateChanged(PlayerState newState) {
+        this.lastKnownState = newState;
     }
 
     @Override

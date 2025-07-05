@@ -29,7 +29,7 @@ public class Physics {
         AABB playerAABB = new AABB (newPosition, PlayerState.PLAYER_SIZE);
 
         for (AABB platform : platforms) {
-            if (platform.collidesWith(platform)) {
+            if (playerAABB.collidesWith(platform)) {
 
                 float overlapX = Math.min(playerAABB.getMaxX() - platform.getMinX(), platform.getMaxX() - playerAABB.getMinX());
                 float overlapY = Math.min(playerAABB.getMaxY() - platform.getMinY(), platform.getMaxY() - playerAABB.getMinY());

@@ -1,6 +1,7 @@
 package Engine;
 
 import Entity.Camera;
+import Entity.PlayerState;
 import Laucher.Main;
 import Render.*;
 
@@ -29,8 +30,11 @@ public class Renderer {
     }
 
     public void renderFrame(Camera camera, float deltaTime){
+        PlayerState currentPlayerState = ThreadManager.playerState.get();
+
         BackgroundRenderer.render(camera, deltaTime);
         PlatformRenderer.render(camera, deltaTime);
+
         RenderPlayer.render(camera, deltaTime);
     }
 
