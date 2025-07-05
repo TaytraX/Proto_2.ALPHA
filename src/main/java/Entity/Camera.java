@@ -18,7 +18,7 @@ public class Camera {
     }
 
     public void followPlayer() {
-        AABB playerPosition = Player.getposition();
+        AABB playerPosition = new AABB(new Vector2f(0, 0), new Vector2f(1, 1));
 
         this.position.set(
                 playerPosition.getMinX() + playerPosition.size().x,

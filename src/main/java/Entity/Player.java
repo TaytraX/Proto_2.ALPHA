@@ -2,14 +2,12 @@ package Entity;
 
 import Engine.AABB;
 import Laucher.Main;
-import Render.Window;
 import org.joml.Vector2f;
 
-import static Laucher.Main.window;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Player {
-    private static AABB position = new AABB(new Vector2f(0, 0), new Vector2f(1, 1));
+    private AABB position = new AABB(new Vector2f(0, 0), new Vector2f(1, 1));
     public long windowId;
 
     public Player() {
@@ -28,10 +26,6 @@ public class Player {
     }
 
     public void update(float deltaTime) {
-    }
-
-    public static AABB getposition(){
-        return position;
     }
 
 }

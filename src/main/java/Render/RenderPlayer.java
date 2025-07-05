@@ -7,6 +7,7 @@ import Entity.Camera;
 import Entity.Player;
 import Laucher.Main;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.lwjgl.opengl.GL30C;
 
 import java.nio.FloatBuffer;
@@ -101,7 +102,7 @@ public class RenderPlayer implements Renderable {
     @Override
     public void render(Camera camera, float deltaTime) {
 
-        AABB playerAABB = Player.getposition();
+        AABB playerAABB = new AABB(new Vector2f(0, 0), new Vector2f(1, 1));
         transformationMatrix = new Matrix4f()
                 .translation(
                         playerAABB.getMinX() + playerAABB.size().x,
