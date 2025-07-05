@@ -3,13 +3,9 @@ package Render;
 import Engine.AABB;
 import Engine.Renderable;
 import Engine.ThreadManager;
-import Entity.AnimationState;
 import Entity.Camera;
-import Entity.Player;
 import Entity.PlayerState;
-import Laucher.Main;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.lwjgl.opengl.GL30C;
 
 import java.nio.FloatBuffer;
@@ -25,7 +21,7 @@ import static org.lwjgl.opengl.GL30C.glBufferData;
 import static org.lwjgl.opengl.GL30C.glGenBuffers;
 import static org.lwjgl.opengl.GL30C.glBindTexture;
 
-public class RenderPlayer implements Renderable, PlayerStateObserver {
+public class RenderPlayer implements Renderable {
 
     private int VAO, VBO, EBO, textureVBO;
 
@@ -34,8 +30,6 @@ public class RenderPlayer implements Renderable, PlayerStateObserver {
     private final Shader shader;
     private final Texture texture;
     Matrix4f transformationMatrix;
-    private Camera camera;
-    private PlayerState lastKnownState;
 
     public RenderPlayer() {
         shader = new Shader("player");
@@ -94,7 +88,7 @@ public class RenderPlayer implements Renderable, PlayerStateObserver {
         glEnableVertexAttribArray(1);
 
         glBindBuffer(GL30C.GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL30C.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL30C.GL_STATIC_DRAW);;
+        glBufferData(GL30C.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL30C.GL_STATIC_DRAW);
 
         glBindVertexArray(0);
 
@@ -135,11 +129,6 @@ public class RenderPlayer implements Renderable, PlayerStateObserver {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
-    }
-
-    @Override
-    public void onPlayerStateChanged(PlayerState newState) {
-        this.lastKnownState = newState;
     }
 
     @Override
