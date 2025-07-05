@@ -6,22 +6,17 @@ import org.joml.Vector2f;
 import java.util.List;
 
 public class Physics {
-
-    public static final float gravity = -9.81f;
-    public static final float airFriction = 0.001f;
-    public static final float groundFriction = 0.5f;
+    public static final float GRAVITY = -9.81f;
+    public static final float AIR_FRICTION = 0.001f;
+    public static final float GROUND_FRICTION = 0.5f;
 
     public PlayerState update(PlayerState currentState, float deltaTime, List<AABB> platforms) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
-        boolean isGrounded = false;
+        boolean isGrounded = currentState.isGrounded();
 
-        if(!currentState.isGrounded()) {
-            newVelocity.y += gravity * deltaTime;
-        }
-
-        float friction = currentState.isGrounded() ? groundFriction : airFriction;
-        newVelocity.y *= (1.0f - friction * deltaTime);
+        applyPlayerActions(currentState, newVelocity, deltaTime);
+        applyPhysics(currentState, newVelocity, deltaTime);
 
         newPosition.x += newVelocity.x * deltaTime;
         newPosition.y += newVelocity.y * deltaTime;
@@ -68,5 +63,34 @@ public class Physics {
                 currentState.jumpForce(),
                 currentState.timestamp()
         );
+    }
+
+    private void applyPlayerActions(PlayerState state, Vector2f velocity, float deltaTime) {
+        // Mouvement horizontal basé sur les actions
+        if (state.moveLeft()) {
+            velocity.x = -state.moveSpeed();
+        } else if (state.moveRight()) {
+            velocity.x = state.moveSpeed();
+        } else if (state.isGrounded()) {
+            // Arrêt progressif au sol
+            velocity.x *= (1.0f - GROUND_FRICTION * deltaTime);
+        }
+
+        // Saut basé sur l'action
+        if (state.jump()) {
+            velocity.y = state.jumpForce();
+        }
+    }
+
+    private void applyPhysics(PlayerState state, Vector2f velocity, float deltaTime) {
+        // Gravité
+        if(!state.isGrounded()) {
+            velocity.y += GRAVITY * deltaTime;
+        }
+
+        // Friction dans l'air
+        if(state.isGrounded()) {
+            velocity.y *= (1.0f - GROUND_FRICTION * deltaTime);
+        }
     }
 }
