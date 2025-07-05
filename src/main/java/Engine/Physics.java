@@ -61,6 +61,9 @@ public class Physics {
                 isGrounded,
                 currentState.animationState(),
                 currentState.facingRight(),
+                currentState.moveLeft(),
+                currentState.moveRight(),
+                currentState.jump(),
                 currentState.moveSpeed(),
                 currentState.jumpForce(),
                 currentState.timestamp()

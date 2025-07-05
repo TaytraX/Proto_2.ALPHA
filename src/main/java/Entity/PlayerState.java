@@ -9,6 +9,9 @@ public record PlayerState(
         boolean isGrounded,
         AnimationState animationState,
         boolean facingRight,
+        boolean moveLeft,
+        boolean moveRight,
+        boolean jump,
         float moveSpeed,         // ✅ AJOUTÉ (optionnel)
         float jumpForce,
         long timestamp
@@ -17,9 +20,5 @@ public record PlayerState(
 
     public AABB getAABB() {
         return new AABB(position, PLAYER_SIZE);
-    }
-
-    public PlayerState(Vector2f position, Vector2f velocity) {
-        this(position, velocity, false, AnimationState.IDLE, true, 5.0f, 12.0f, System.currentTimeMillis());
     }
 }
