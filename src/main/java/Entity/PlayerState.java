@@ -1,5 +1,6 @@
 package Entity;
 
+import Engine.AABB;
 import org.joml.Vector2f;
 
 public record PlayerState(
@@ -8,5 +9,17 @@ public record PlayerState(
         boolean isGrounded,
         AnimationState animationState,
         boolean facingRight,
+        float moveSpeed,         // ✅ AJOUTÉ (optionnel)
+        float jumpForce,
         long timestamp
-) {}
+) {
+    public static final Vector2f PLAYER_SIZE = new Vector2f(0.4f, 0.6f);
+
+    public AABB getAABB() {
+        return new AABB(position, PLAYER_SIZE);
+    }
+
+    public PlayerState(Vector2f position, Vector2f velocity) {
+        this(position, velocity, false, AnimationState.IDLE, true, 5.0f, 12.0f, System.currentTimeMillis());
+    }
+}
