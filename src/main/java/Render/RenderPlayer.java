@@ -33,13 +33,11 @@ public class RenderPlayer implements Renderable, PlayerStateObserver {
 
     private final Shader shader;
     private final Texture texture;
-    private final Window window;
     Matrix4f transformationMatrix;
     private Camera camera;
     private PlayerState lastKnownState;
 
     public RenderPlayer() {
-        window = Main.getWindow();
         shader = new Shader("player");
         texture = new Texture("player");
         initialize();

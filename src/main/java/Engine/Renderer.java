@@ -11,13 +11,11 @@ public class Renderer {
 
     private List<Renderable> renderers;
 
-    public Window window;
     private final BackgroundRenderer BackgroundRenderer;
     private final PlatformRenderer PlatformRenderer;
     private final RenderPlayer RenderPlayer;
 
-    public Renderer() {
-        window = Main.getWindow();
+    public Renderer(Window window) {
         BackgroundRenderer = new BackgroundRenderer();
         PlatformRenderer = new PlatformRenderer();
         RenderPlayer = new RenderPlayer();
