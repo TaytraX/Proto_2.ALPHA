@@ -3,6 +3,7 @@ package Render;
 import Engine.AABB;
 import Engine.Renderable;
 import Engine.ThreadManager;
+import Entity.AnimationState;
 import Entity.Camera;
 import Entity.PlayerState;
 import org.joml.Matrix4f;
@@ -10,6 +11,7 @@ import org.lwjgl.opengl.GL30C;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL15C.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -30,6 +32,8 @@ public class RenderPlayer implements Renderable {
     private final Shader shader;
     private final Texture texture;
     Matrix4f transformationMatrix;
+
+    private Map<AnimationState, Texture> animationTextures;
 
     public RenderPlayer() {
         shader = new Shader("player");
