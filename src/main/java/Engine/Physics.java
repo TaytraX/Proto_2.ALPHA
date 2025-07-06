@@ -7,7 +7,6 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -9.81f;
-    public static final float AIR_FRICTION = 0.001f;
     public static final float GROUND_FRICTION = 0.5f;
 
     public PlayerState update(PlayerState currentState, float deltaTime, List<AABB> platforms) {

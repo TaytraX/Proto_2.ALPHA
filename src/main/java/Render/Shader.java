@@ -114,13 +114,15 @@ public class Shader {
 
     private void loadDefaultShader() {
         // Crée un shader par défaut en hardcoded
-        String defaultVertex = "#version 330 core\n" +
-                "in vec3 position;\n" +
-                "void main() { gl_Position = vec4(position, 1.0); }";
+        String defaultVertex = """
+                #version 330 core
+                in vec3 position;
+                void main() { gl_Position = vec4(position, 1.0); }""";
 
-        String defaultFragment = "#version 330 core\n" +
-                "out vec4 fragColor;\n" +
-                "void main() { fragColor = vec4(1.0, 0.0, 1.0, 1.0); }"; // Rose shocking
+        String defaultFragment = """
+                #version 330 core
+                out vec4 fragColor;
+                void main() { fragColor = vec4(1.0, 0.0, 1.0, 1.0); }"""; // Rose shocking
 
         compile(defaultVertex, defaultFragment);
     }
