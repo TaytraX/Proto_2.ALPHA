@@ -15,13 +15,13 @@ public class Animation {
         if (!isMoveLeft && !isMoveRight && !isJump && !isFalling && !isStop && !landing) isIdle = true;
 
         return switch (state.animationState()) {
-            case IDLE -> isIdle ? AnimationState.IDLE : AnimationState.WALKLEFT;
-            case WALKLEFT -> isMoveLeft ? AnimationState.WALKLEFT : AnimationState.WALKRIGHT;
-            case WALKRIGHT -> isMoveRight ? AnimationState.WALKRIGHT : AnimationState.JUMPING;
-            case JUMPING -> isJump ? AnimationState.JUMPING : AnimationState.FALLING;
-            case FALLING -> isFalling ? AnimationState.FALLING : AnimationState.BRAKE;
-            case BRAKE -> isStop ? AnimationState.BRAKE : AnimationState.LANDING;
-            case LANDING -> isIdle ? AnimationState.LANDING : AnimationState.IDLE;
+            case IDLE ->  AnimationState.IDLE;
+            case WALKLEFT -> AnimationState.WALKLEFT;
+            case WALKRIGHT -> AnimationState.WALKRIGHT;
+            case JUMPING -> AnimationState.JUMPING;
+            case FALLING -> AnimationState.FALLING;
+            case BRAKE -> AnimationState.BRAKE;
+            case LANDING -> AnimationState.LANDING;
         };
     }
 }
