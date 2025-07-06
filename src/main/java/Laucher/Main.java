@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         // Créer la fenêtre
-        window = new Window("Minecraft 2D", width, height, true);
+        window = new Window("2D Platformer", width, height, true);
 
         // Initialiser
         window.init();

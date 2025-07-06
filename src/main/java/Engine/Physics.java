@@ -13,7 +13,7 @@ public class Physics {
     public PlayerState update(PlayerState currentState, float deltaTime, List<AABB> platforms) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
-        boolean isGrounded = currentState.isGrounded();
+        boolean isGrounded = false;
 
         applyPlayerActions(currentState, newVelocity, deltaTime);
         applyPhysics(currentState, newVelocity, deltaTime);

@@ -13,7 +13,6 @@ public class ThreadManager {
     public static final BlockingDeque<PlatformGenRequest> platformGenQueue = new LinkedBlockingDeque<>();
     public static final BlockingDeque<GeneratedPlatforms> generatedPlatforms = new LinkedBlockingDeque<>();
 
-
     public ExecutorService platformGenerationExecutor;
 
     public ThreadManager() {
@@ -23,5 +22,4 @@ public class ThreadManager {
             return thread;
         });
     }
-
 }
