@@ -2,16 +2,16 @@ package Entity;
 
 public class Animation {
 
-    public AnimationState processTransiteAnimation(){
+    public AnimationState processTransiteAnimation(PlayerState currentState, AnimationState previousAnimation){
 
-        boolean isMoveLeft = false, isMoveRight = false, isJump = false, isFalling = false, isStop = false, landing = false, isIdle = false, isgrounded = false;
-
-        if(isMoveLeft && isgrounded) return AnimationState.WALKLEFT;
-        if(isMoveRight && isgrounded) return AnimationState.WALKRIGHT;
-        if(isJump) return AnimationState.JUMPING;
-        if(isFalling && isgrounded) return AnimationState.FALLING;
-        if(isStop) return AnimationState.BRAKE;
-        if(landing) return AnimationState.LANDING;
-        return AnimationState.IDLE;
+        boolean isGrounded = currentState.isGrounded();
+        boolean isMoveLeft = currentState.moveLeft();
+        boolean isMoveRight = currentState.moveRight();
+        boolean isRising = currentState.velocity().y > 0;
+        boolean hasVerticaleVelocity = Math.abs(currentState.velocity().y) > 0.1f; // Seuil pour BRAKE
+        boolean isJumping = currentState.jump();
+        boolean isFalling = currentState.velocity().y < 0 && !isGrounded;
+        boolean isLanding = isGrounded && isRising && hasVerticaleVelocity;
+        boolean isSkidding = !isMoveLeft && !isMoveRight && isGrounded && Math.abs(currentState.velocity().x) > 0.1f;
     }
 }
