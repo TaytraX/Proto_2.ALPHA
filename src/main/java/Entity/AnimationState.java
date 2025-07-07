@@ -3,13 +3,13 @@ package Entity;
 public enum AnimationState {
     // Priorité 1 - Animations critiques (temporelles)
     LANDING(1, 300),    // 300ms
-    JUMPING(1, 0),    // 200ms
-    JUMPING_LEFT(1,0),
-    JUMPING_RIGHT(1,0),
+    JUMPING(1, 0),
 
     // Priorité 2 - Physique (basées sur l'état)
     FALLING(2, 0),      // Pas de durée fixe
     RISING(2, 0),
+    JUMPING_LEFT(2,0),
+    JUMPING_RIGHT(2,0),
 
     // Priorité 3 - Mouvement (basées sur l'état)
     SKIDDING(3, 0),

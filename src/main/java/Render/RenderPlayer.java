@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL30C;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.lwjgl.opengl.GL15C.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -27,11 +26,10 @@ import static org.lwjgl.opengl.GL30C.glBindTexture;
 
 public class RenderPlayer implements Renderable {
 
-    private int VAO, VBO, EBO, textureVBO;
-    private AnimationController animationController;
-    private AnimationState currentAnimation = AnimationState.IDLE;
+    private int VAO;
+    private final AnimationController animationController;
+    private AnimationState currentAnimation;
     private Texture currentTexture;
-    private AnimationState newAnimation;
 
     private final FloatBuffer matrixBuffer = org.lwjgl.BufferUtils.createFloatBuffer(16);
     private final Matrix4f transformationMatrix = new Matrix4f();
@@ -59,10 +57,10 @@ public class RenderPlayer implements Renderable {
             e.printStackTrace();
         }
 
-        if (newAnimation != currentAnimation) {
-            currentTexture = Objects.requireNonNull(animationTextures).getOrDefault(null, animationTextures.get(AnimationState.IDLE));
-            currentAnimation = newAnimation;
-        }
+        assert animationTextures != null;
+        currentTexture = animationTextures.get(AnimationState.IDLE);
+        currentAnimation = AnimationState.IDLE;
+
         initialize();
     }
 
@@ -70,9 +68,9 @@ public class RenderPlayer implements Renderable {
     public void initialize() {
 
         VAO = glGenVertexArrays();
-        VBO = glGenBuffers();
-        EBO = glGenBuffers();
-        textureVBO = glGenBuffers();
+        int VBO = glGenBuffers();
+        int EBO = glGenBuffers();
+        int textureVBO = glGenBuffers();
 
         // ✅ Géométrie du joueur (quad 2D)
         float[] vertices = {
@@ -136,7 +134,7 @@ public class RenderPlayer implements Renderable {
                         0.0f
                 );
 
-        newAnimation = animationController.processTransiteAnimation(
+        AnimationState newAnimation = animationController.processTransiteAnimation(
                 currentState,
                 currentAnimation
         );
@@ -176,7 +174,8 @@ public class RenderPlayer implements Renderable {
     @Override
     public void cleanup() {
         shader.cleanup();
-        for(Texture texture : animationTextures.values())
-                texture.cleanUp();
+        for (Texture texture : animationTextures.values()) {
+            texture.cleanUp();
+        }
     }
 }
