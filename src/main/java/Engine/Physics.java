@@ -31,9 +31,9 @@ public class Physics {
                 if (overlapX < overlapY) {
                     if (newVelocity.x > 0){
                         newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
-                    }else {
-                        newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
                     }
+                    else newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
+
                     newVelocity.x = 0;
                 }else {
                     if (newVelocity.y > 0) {
@@ -85,11 +85,6 @@ public class Physics {
         // Gravité
         if(!state.isGrounded()) {
             velocity.y += GRAVITY * deltaTime;
-        }
-
-        // Friction dans l'air
-        if(state.isGrounded()) {
-            velocity.y *= (1.0f - GROUND_FRICTION * deltaTime);
         }
     }
 }

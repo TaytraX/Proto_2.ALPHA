@@ -30,14 +30,24 @@ public class RenderPlayer implements Renderable {
     private final FloatBuffer matrixBuffer = org.lwjgl.BufferUtils.createFloatBuffer(16);
 
     private final Shader shader;
-    private final Texture texture;
     Matrix4f transformationMatrix;
 
-    private Map<AnimationState, Texture> animationTextures;
+    private final Map<AnimationState, Texture> animationTextures;
 
     public RenderPlayer() {
         shader = new Shader("player");
-        texture = new Texture("player");
+        animationTextures = Map.of(
+                AnimationState.WALKING_RIGHT, new Texture("player_Walking_Right"),
+                AnimationState.WALKING_LEFT,  new Texture("playerIdle_Walking_Left"),
+                AnimationState.JUMPING,       new Texture("player_jump"),
+                AnimationState.JUMPING_LEFT,  new Texture("player_Left_jump"),
+                AnimationState.JUMPING_RIGHT, new Texture("player_Right_jump"),
+                AnimationState.LANDING,       new Texture("player_isLanding"),
+                AnimationState.SKIDDING,      new Texture("player_isSkidding"),
+                AnimationState.FALLING,       new Texture("player_isFalling"),
+                AnimationState.RISING,        new Texture("player_isRising"),
+                AnimationState.IDLE,          new Texture("player")
+        );
         initialize();
     }
 
