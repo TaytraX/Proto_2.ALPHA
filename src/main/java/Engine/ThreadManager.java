@@ -10,8 +10,8 @@ public class ThreadManager {
 
     public static final AtomicReference<PlayerState> playerState  = new AtomicReference<>();
 
-    public static final BlockingDeque<PlatformGenRequest> platformGenQueue = new LinkedBlockingDeque<>();
-    public static final BlockingDeque<GeneratedPlatforms> generatedPlatforms = new LinkedBlockingDeque<>();
+    public static final BlockingDeque<GroundGenRequest> platformGenQueue = new LinkedBlockingDeque<>();
+    public static final BlockingDeque<GeneratedGround> GENERATED_PLATFORMS = new LinkedBlockingDeque<>();
 
     public ExecutorService platformGenerationExecutor;
 
