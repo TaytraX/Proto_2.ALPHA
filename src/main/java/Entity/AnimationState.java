@@ -1,26 +1,31 @@
 package Entity;
 
 public enum AnimationState {
+    // Priorité 1 - Animations critiques (temporelles)
+    LANDING(1, 300),    // 300ms
+    JUMPING(1, 0),    // 200ms
 
-    IDLE,
-    WALKING_LEFT,
-    WALKING_RIGHT,
-    JUMPING,
-    FALLING,
-    SKIDDING,
-    RISING,
-    LANDING;
+    // Priorité 2 - Physique (basées sur l'état)
+    FALLING(2, 0),      // Pas de durée fixe
+    RISING(2, 0),
 
-    // Optionnel : propriétés pour chaque état
-    public float getAnimationSpeed() {
-        return switch (this) {
-            case IDLE -> 0.5f;
-            case WALKING_LEFT, WALKING_RIGHT -> 1.0f;
-            case JUMPING -> 0.8f;
-            case RISING -> 0.1f;
-            case FALLING -> 0.6f;
-            case SKIDDING -> 0.3f;
-            case LANDING -> 1.2f;
-        };
+    // Priorité 3 - Mouvement (basées sur l'état)
+    SKIDDING(3, 0),
+    WALKING_LEFT(3, 0),
+    WALKING_RIGHT(3, 0),
+
+    // Priorité 4 - Défaut
+    IDLE(4, 0);
+
+    private final int priority;
+    private final long duration; // 0 = pas de durée fixe
+
+    AnimationState(int priority, long duration) {
+        this.priority = priority;
+        this.duration = duration;
     }
+
+    public int getPriority() { return priority; }
+    public long getDuration() { return duration; }
+    public boolean hasFixedDuration() { return duration > 0; }
 }
