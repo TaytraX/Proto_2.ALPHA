@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL30C;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL15C.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -27,28 +28,41 @@ import static org.lwjgl.opengl.GL30C.glBindTexture;
 public class RenderPlayer implements Renderable {
 
     private int VAO, VBO, EBO, textureVBO;
+    private AnimationController animationController;
+    private AnimationState currentAnimation = AnimationState.IDLE;
+    private Texture currentTexture;
+    private AnimationState newAnimation;
 
     private final FloatBuffer matrixBuffer = org.lwjgl.BufferUtils.createFloatBuffer(16);
-
+    private final Matrix4f transformationMatrix = new Matrix4f();
     private final Shader shader;
-    Matrix4f transformationMatrix;
 
-    private final Map<AnimationState, Texture> animationTextures;
+    private Map<AnimationState, Texture> animationTextures;
 
     public RenderPlayer() {
         shader = new Shader("player");
-        animationTextures = Map.of(
-                AnimationState.WALKING_RIGHT, new Texture("player_Walking_Right"),
-                AnimationState.WALKING_LEFT,  new Texture("playerIdle_Walking_Left"),
-                AnimationState.JUMPING,       new Texture("player_jump"),
-                AnimationState.JUMPING_LEFT,  new Texture("player_Left_jump"),
-                AnimationState.JUMPING_RIGHT, new Texture("player_Right_jump"),
-                AnimationState.LANDING,       new Texture("player_isLanding"),
-                AnimationState.SKIDDING,      new Texture("player_isSkidding"),
-                AnimationState.FALLING,       new Texture("player_isFalling"),
-                AnimationState.RISING,        new Texture("player_isRising"),
-                AnimationState.IDLE,          new Texture("player")
-        );
+        animationController = new AnimationController();
+        try {
+            animationTextures = Map.of(
+                    AnimationState.WALKING_RIGHT, new Texture("player_Walking_Right"),
+                    AnimationState.WALKING_LEFT,  new Texture("playerIdle_Walking_Left"),
+                    AnimationState.JUMPING,       new Texture("player_jump"),
+                    AnimationState.JUMPING_LEFT,  new Texture("player_Left_jump"),
+                    AnimationState.JUMPING_RIGHT, new Texture("player_Right_jump"),
+                    AnimationState.LANDING,       new Texture("player_isLanding"),
+                    AnimationState.SKIDDING,      new Texture("player_isSkidding"),
+                    AnimationState.FALLING,       new Texture("player_isFalling"),
+                    AnimationState.RISING,        new Texture("player_isRising"),
+                    AnimationState.IDLE,          new Texture("player")
+            );
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (newAnimation != currentAnimation) {
+            currentTexture = Objects.requireNonNull(animationTextures).getOrDefault(null, animationTextures.get(AnimationState.IDLE));
+            currentAnimation = newAnimation;
+        }
         initialize();
     }
 
@@ -116,12 +130,25 @@ public class RenderPlayer implements Renderable {
         if(currentState == null) return;
 
         AABB playerAABB = currentState.getAABB();
-        transformationMatrix = new Matrix4f()
-                .translation(
+        transformationMatrix.identity().translation(
                         playerAABB.getMinX() + playerAABB.size().x,
                         playerAABB.getMinY() + playerAABB.size().y,
                         0.0f
                 );
+
+        newAnimation = animationController.processTransiteAnimation(
+                currentState,
+                currentAnimation
+        );
+
+
+        if(newAnimation != currentAnimation) {
+            currentTexture = animationTextures.get(newAnimation);
+            currentAnimation = newAnimation;
+        }
+
+        Texture texture = currentTexture;
+        if(texture == null) return;
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
@@ -146,13 +173,10 @@ public class RenderPlayer implements Renderable {
 
     }
 
-    private AnimationController animationUpdate(PlayerState currentState, AnimationState previousAnimation, AnimationController animationController) {
-        animationController.processTransiteAnimation(currentState, previousAnimation);
-        return animationController;
-    }
-
     @Override
     public void cleanup() {
-
+        shader.cleanup();
+        for(Texture texture : animationTextures.values())
+                texture.cleanUp();
     }
 }
