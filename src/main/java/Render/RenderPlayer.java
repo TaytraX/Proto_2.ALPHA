@@ -3,6 +3,7 @@ package Render;
 import Engine.AABB;
 import Engine.Renderable;
 import Engine.ThreadManager;
+import Entity.AnimationController;
 import Entity.AnimationState;
 import Entity.Camera;
 import Entity.PlayerState;
@@ -143,6 +144,11 @@ public class RenderPlayer implements Renderable {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
+    }
+
+    private AnimationController animationUpdate(PlayerState currentState, AnimationState previousAnimation, AnimationController animationController) {
+        animationController.processTransiteAnimation(currentState, previousAnimation);
+        return animationController;
     }
 
     @Override
