@@ -16,7 +16,11 @@ public class Main {
         window = new Window("2D Platformer", width, height, true);
         engine = new Engine();
 
-        engine.start();
+        try {
+            engine.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static Window getWindow() {

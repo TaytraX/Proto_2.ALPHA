@@ -33,7 +33,7 @@ public class Engine {
     private void init() {
         playerState = ThreadManager.playerState.get();
         window = Main.getWindow();
-        Renderer = new Renderer(window);
+        Renderer = new Renderer();
         camera = new Camera();
         player = new Player();
 
@@ -55,6 +55,7 @@ public class Engine {
         );
         ThreadManager.playerState.set(initialState);
 
+        window.init();
         Renderer.initialize();
 
     }
@@ -99,6 +100,5 @@ public class Engine {
         Renderer.cleanUp();
         window.cleanup();
         glfwTerminate();
-
     }
 }

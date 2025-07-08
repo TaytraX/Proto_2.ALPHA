@@ -27,7 +27,10 @@ public enum AnimationState {
         this.duration = duration;
     }
 
-    public int getPriority() { return priority; }
     public long getDuration() { return duration; }
     public boolean hasFixedDuration() { return duration > 0; }
+
+    public int getPriority() {
+        return priority;
+    }
 }

@@ -1,20 +1,15 @@
 package Engine;
 
 import Entity.Camera;
-import Entity.PlayerState;
 import Render.*;
 
-import java.util.List;
-
 public class Renderer {
-
-    private List<Renderable> renderers;
 
     private final BackgroundRenderer BackgroundRenderer;
     private final GroundRenderer GroundRenderer;
     private final RenderPlayer RenderPlayer;
 
-    public Renderer(Window window) {
+    public Renderer() {
         BackgroundRenderer = new BackgroundRenderer();
         GroundRenderer = new GroundRenderer();
         RenderPlayer = new RenderPlayer();
@@ -27,7 +22,6 @@ public class Renderer {
     }
 
     public void renderFrame(Camera camera, float deltaTime){
-        PlayerState currentPlayerState = ThreadManager.playerState.get();
 
         BackgroundRenderer.render(camera, deltaTime);
         GroundRenderer.render(camera, deltaTime);
