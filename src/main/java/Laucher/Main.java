@@ -1,11 +1,12 @@
 package Laucher;
 
+import Engine.Engine;
 import Render.Window;
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Main {
 
     public static Window window;
+    public static Engine engine;
 
     public static int width = 1280;
     public static int height = 800;
@@ -13,19 +14,9 @@ public class Main {
     public static void main(String[] args) {
         // Créer la fenêtre
         window = new Window("2D Platformer", width, height, true);
+        engine = new Engine();
 
-        // Initialiser
-        window.init();
-
-        // Boucle principale
-        while (!window.windowShouldClose()) {
-            window.clear();
-            window.update();
-        }
-
-        // Nettoyage
-        window.cleanup();
-        glfwTerminate();
+        engine.start();
     }
 
     public static Window getWindow() {

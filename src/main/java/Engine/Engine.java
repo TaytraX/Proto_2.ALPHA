@@ -1,21 +1,28 @@
 package Engine;
 
+import Entity.AnimationState;
 import Entity.Camera;
+import Entity.Player;
 import Entity.PlayerState;
 import Laucher.Main;
 import Render.Window;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
+import org.joml.Vector2f;
+
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 public class Engine {
     public static boolean isRunning;
-    private GLFWErrorCallback errorCallback;
     public Window window;
     public Renderer Renderer;
     public PlayerState playerState;
     public Camera camera;
+    public Player player;
+    private Physics physics;
+    float deltaTime = 16.0f;
+
+    public List<AABB> grounds;
 
     public void start() {
         init();
@@ -24,10 +31,29 @@ public class Engine {
     }
 
     private void init() {
-        GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
+        playerState = ThreadManager.playerState.get();
         window = Main.getWindow();
         Renderer = new Renderer(window);
         camera = new Camera();
+        player = new Player();
+
+        physics = new Physics();
+
+        // Initialiser un PlayerState de base
+        PlayerState initialState = new PlayerState(
+                new Vector2f(0, 0),
+                new Vector2f(0, 0),
+                false,
+                AnimationState.IDLE,
+                true,
+                false,
+                false,
+                false,
+                5.0f,
+                10.0f,
+                System.currentTimeMillis()
+        );
+        ThreadManager.playerState.set(initialState);
 
         Renderer.initialize();
 
@@ -35,28 +61,38 @@ public class Engine {
 
     public void render() {
     try {
-        GLFW.glfwPollEvents();
-        Renderer.renderFrame(camera, 0.1f);
+        Renderer.renderFrame(camera, deltaTime);
+        window.update();
     } catch (Exception e) { e.printStackTrace(); }
     }
 
     public void run() {
         isRunning = true;
-        try{
             while (isRunning) {
-                render();
+                try{
+                handleInput();
                 update();
+                render();
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
         cleanup();
 
     }
 
+    private void handleInput() {
+        PlayerState currentState = ThreadManager.playerState.get();
+        PlayerState inputState = player.input(currentState);
+        ThreadManager.playerState.set(inputState);
+    }
+
     public void update() {
+        PlayerState currentState = ThreadManager.playerState.get();
+        PlayerState physicsState = physics.update(currentState, deltaTime, grounds);
+        ThreadManager.playerState.set(physicsState);
+
         window.clear();
-        window.update();
     }
 
     public void cleanup() {
