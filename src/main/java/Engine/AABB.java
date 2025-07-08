@@ -1,11 +1,10 @@
 package Engine;
 
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 
 public record AABB(Vector2f position, Vector2f size) {
 
-    public boolean collidesWith(@NotNull AABB other) {
+    public boolean collidesWith(AABB other) {
         return getMaxX() >= other.getMinX() &&
                getMinX() <= other.getMaxX() &&
                getMaxY() >= other.getMinY() &&
