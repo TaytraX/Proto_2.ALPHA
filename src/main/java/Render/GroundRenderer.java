@@ -3,7 +3,7 @@ package Render;
 import Engine.Renderable;
 import Entity.Camera;
 
-public class PlatformRenderer implements Renderable {
+public class GroundRenderer implements Renderable {
     @Override
     public void initialize() {
 

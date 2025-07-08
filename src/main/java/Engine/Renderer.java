@@ -2,7 +2,6 @@ package Engine;
 
 import Entity.Camera;
 import Entity.PlayerState;
-import Laucher.Main;
 import Render.*;
 
 import java.util.List;
@@ -12,12 +11,12 @@ public class Renderer {
     private List<Renderable> renderers;
 
     private final BackgroundRenderer BackgroundRenderer;
-    private final PlatformRenderer PlatformRenderer;
+    private final GroundRenderer PlatformRenderer;
     private final RenderPlayer RenderPlayer;
 
     public Renderer(Window window) {
         BackgroundRenderer = new BackgroundRenderer();
-        PlatformRenderer = new PlatformRenderer();
+        PlatformRenderer = new GroundRenderer();
         RenderPlayer = new RenderPlayer();
     }
 

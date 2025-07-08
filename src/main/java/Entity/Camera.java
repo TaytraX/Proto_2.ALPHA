@@ -7,7 +7,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 public class Camera {
-    private Vector2f FOV;
     private Vector2f position;
     private final Matrix4f projectionMatrix = new Matrix4f();
     private final Matrix4f viewMatrix = new Matrix4f();
@@ -18,7 +17,7 @@ public class Camera {
     private Vector2f deadZone = new Vector2f(2.0f, 1.5f); // Zone morte
 
     public Camera() {
-        FOV = new Vector2f((Main.getWidth() / 16f), (Main.getHeight() / 16f));
+        Vector2f FOV = new Vector2f((Main.getWidth() / 16f), (Main.getHeight() / 16f));
         position = new Vector2f(0, 0);
     }
 
