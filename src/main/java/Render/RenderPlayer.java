@@ -1,6 +1,7 @@
 package Render;
 
 import Engine.AABB;
+import Engine.GameLogger;
 import Engine.Renderable;
 import Engine.ThreadManager;
 import Entity.AnimationController;
@@ -125,7 +126,11 @@ public class RenderPlayer implements Renderable {
     public void render(Camera camera, float deltaTime) {
         try {
             PlayerState currentState = ThreadManager.playerState.get();
-            if(currentState == null) return;
+            if(currentState == null) {
+                GameLogger.error("PlayerState est null dans render !", null);
+                return;
+            }
+
 
             AABB playerAABB = currentState.getAABB();
             transformationMatrix.identity().translation(
@@ -146,7 +151,12 @@ public class RenderPlayer implements Renderable {
             }
 
             Texture texture = currentTexture;
-            if(texture == null) return;
+
+            // Vérification des textures
+            if (animationTextures == null || animationTextures.isEmpty()) {
+                GameLogger.error("Textures d'animation manquantes !", null);
+                return;
+            };
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
@@ -169,7 +179,8 @@ public class RenderPlayer implements Renderable {
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
         } catch (Exception e) {
-            e.printStackTrace();
+            GameLogger.error("Erreur dans le rendu du joueur", e);
+            // Ne pas faire crash le jeu, juste ignorer ce frame
         }
 
     }
