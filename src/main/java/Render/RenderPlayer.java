@@ -99,7 +99,6 @@ public class RenderPlayer implements Renderable {
                 1.0f, 1.0f   // Bas droit -> correspond au haut de l'image
         };
 
-
         FloatBuffer textureBuffer = org.lwjgl.BufferUtils.createFloatBuffer(textureCoords.length);
         textureBuffer.put(textureCoords).flip();
 
