@@ -69,12 +69,17 @@ public class Engine {
             }
 
             window.init();
-            Renderer.initialize();
             Renderer = new Renderer();
+            Renderer.initialize();
             playerState = ThreadManager.playerState.get();
             camera = new Camera();
             player = new Player();
             physics = new Physics();
+
+            // Dans init()
+            grounds.add(new AABB(new Vector2f(0, -5), new Vector2f(10, 1)));    // Sol principal
+            grounds.add(new AABB(new Vector2f(5, -2), new Vector2f(3, 0.5f)));  // Plateforme
+            grounds.add(new AABB(new Vector2f(-5, 0), new Vector2f(2, 0.5f)));  // Autre plateforme
 
             GameLogger.info("Composants créés");
 
