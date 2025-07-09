@@ -123,51 +123,54 @@ public class RenderPlayer implements Renderable {
 
     @Override
     public void render(Camera camera, float deltaTime) {
+        try {
+            PlayerState currentState = ThreadManager.playerState.get();
+            if(currentState == null) return;
 
-        PlayerState currentState = ThreadManager.playerState.get();
-        if(currentState == null) return;
+            AABB playerAABB = currentState.getAABB();
+            transformationMatrix.identity().translation(
+                    playerAABB.getMinX() + playerAABB.size().x,
+                    playerAABB.getMinY() + playerAABB.size().y,
+                    0.0f
+            );
 
-        AABB playerAABB = currentState.getAABB();
-        transformationMatrix.identity().translation(
-                        playerAABB.getMinX() + playerAABB.size().x,
-                        playerAABB.getMinY() + playerAABB.size().y,
-                        0.0f
-                );
-
-        AnimationState newAnimation = animationController.processTransiteAnimation(
-                currentState,
-                currentAnimation
-        );
+            AnimationState newAnimation = animationController.processTransiteAnimation(
+                    currentState,
+                    currentAnimation
+            );
 
 
-        if(newAnimation != currentAnimation) {
-            currentTexture = animationTextures.get(newAnimation);
-            currentAnimation = newAnimation;
+            if(newAnimation != currentAnimation) {
+                currentTexture = animationTextures.get(newAnimation);
+                currentAnimation = newAnimation;
+            }
+
+            Texture texture = currentTexture;
+            if(texture == null) return;
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
+
+            shader.use();
+
+            matrixBuffer.clear();
+            transformationMatrix.get(matrixBuffer);
+            shader.setUniformMat4f("transformationMatrix", matrixBuffer);
+
+            matrixBuffer.clear();
+            camera.getProjectionMatrix().get(matrixBuffer);
+            shader.setUniformMat4f("projectionMatrix", matrixBuffer);
+
+            matrixBuffer.clear();
+            camera.getViewMatrix().get(matrixBuffer);
+            shader.setUniformMat4f("viewMatrix", matrixBuffer);
+
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        Texture texture = currentTexture;
-        if(texture == null) return;
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
-
-        shader.use();
-
-        matrixBuffer.clear();
-        transformationMatrix.get(matrixBuffer);
-        shader.setUniformMat4f("transformationMatrix", matrixBuffer);
-
-        matrixBuffer.clear();
-        camera.getProjectionMatrix().get(matrixBuffer);
-        shader.setUniformMat4f("projectionMatrix", matrixBuffer);
-
-        matrixBuffer.clear();
-        camera.getViewMatrix().get(matrixBuffer);
-        shader.setUniformMat4f("viewMatrix", matrixBuffer);
-
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
 
     }
 

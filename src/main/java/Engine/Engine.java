@@ -8,78 +8,85 @@ import Laucher.Main;
 import Render.Window;
 import org.joml.Vector2f;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 public class Engine {
-    public static boolean isRunning;
     public Window window;
+    public boolean isRunning;
     public Renderer Renderer;
     public PlayerState playerState;
     public Camera camera;
     public Player player;
     private Physics physics;
-    float deltaTime = 16.0f;
+    private long lastTime = System.currentTimeMillis();
+    private float deltaTime = 0.016f;
 
-    public List<AABB> grounds;
+    public List<AABB> grounds = new ArrayList<>();
 
     public void start() {
         init();
-        if(isRunning) return;
         run();
     }
 
     private void init() {
-        playerState = ThreadManager.playerState.get();
-        window = Main.getWindow();
-        Renderer = new Renderer();
-        camera = new Camera();
-        player = new Player();
+        try {
+            window = Main.getWindow();
+            if(window == null) throw new Exception("Window nor initialized");
+            Renderer = new Renderer();
+            playerState = ThreadManager.playerState.get();
+            camera = new Camera();
+            player = new Player();
+            physics = new Physics();
 
-        physics = new Physics();
+            // Initialiser un PlayerState de base
+            PlayerState initialState = new PlayerState(
+                    new Vector2f(0, 0),
+                    new Vector2f(0, 0),
+                    false,
+                    AnimationState.IDLE,
+                    true,
+                    false,
+                    false,
+                    false,
+                    5.0f,
+                    10.0f,
+                    System.currentTimeMillis()
+            );
+            ThreadManager.playerState.set(initialState);
+            grounds.add(new AABB(new Vector2f(0, -5), new Vector2f(10, 1)));
 
-        // Initialiser un PlayerState de base
-        PlayerState initialState = new PlayerState(
-                new Vector2f(0, 0),
-                new Vector2f(0, 0),
-                false,
-                AnimationState.IDLE,
-                true,
-                false,
-                false,
-                false,
-                5.0f,
-                10.0f,
-                System.currentTimeMillis()
-        );
-        ThreadManager.playerState.set(initialState);
-
-        window.init();
-        Renderer.initialize();
-
+            window.init();
+            Renderer.initialize();
+        } catch (Exception e) {
+            System.err.println("Failed to initialize engine : " + e.getMessage());
+        }
     }
 
     public void render() {
-    try {
-        Renderer.renderFrame(camera, deltaTime);
-        window.update();
-    } catch (Exception e) { e.printStackTrace(); }
+        try {
+            window.clear();
+            Renderer.renderFrame(camera, deltaTime);
+            window.update();
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     public void run() {
         isRunning = true;
-            while (isRunning) {
-                try{
+            while (isRunning && !window.windowShouldClose()) {
+                long currentTime = System.currentTimeMillis();
+                deltaTime = (currentTime - lastTime) / 1000f;
+                lastTime = currentTime;
+
+                deltaTime = Math.min(deltaTime, 0.016f);
+
                 handleInput();
                 update();
                 render();
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         cleanup();
-
     }
 
     private void handleInput() {
