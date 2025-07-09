@@ -44,7 +44,7 @@ public class RenderPlayer implements Renderable {
         try {
             animationTextures = Map.of(
                     AnimationState.WALKING_RIGHT, new Texture("player_Walking_Right"),
-                    AnimationState.WALKING_LEFT,  new Texture("playerIdle_Walking_Left"),
+                    AnimationState.WALKING_LEFT,  new Texture("player_Walking_Left"),
                     AnimationState.JUMPING,       new Texture("player_jump"),
                     AnimationState.JUMPING_LEFT,  new Texture("player_Left_jump"),
                     AnimationState.JUMPING_RIGHT, new Texture("player_Right_jump"),

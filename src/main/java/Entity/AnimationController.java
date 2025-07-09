@@ -79,8 +79,6 @@ public class AnimationController {
         if (currentState.moveLeft()) return AnimationState.WALKING_LEFT;
         if (currentState.moveRight()) return AnimationState.WALKING_RIGHT;
         if (currentState.jump()) return AnimationState.JUMPING;
-        if (currentState.jump() && currentState.moveLeft()) return AnimationState.JUMPING_LEFT;
-        if (currentState.jump() && currentState.moveRight()) return AnimationState.JUMPING_RIGHT;
 
         return null;
     }

@@ -13,10 +13,7 @@ void main() {
     float whiteThreshold = 0.9;
     float greenThreshold = 0.8;
 
-    // Détection du blanc
-    bool isWhite = (textureColor.r > whiteThreshold &&
-    textureColor.g > whiteThreshold &&
-    textureColor.b > whiteThreshold);
+    if (textureColor.a < 0.1) discard;
 
     // Détection des couleurs très sombres (parfois des artefacts)
     bool isVeryDark = (textureColor.r < 0.1 &&

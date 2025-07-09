@@ -81,8 +81,8 @@ public class Camera {
 
     // Reste du code inchangé...
     public Matrix4f getProjectionMatrix() {
-        float worldWidth = 40.0f;
-        float worldHeight = 25.0f;
+        float worldWidth = 20.0f;
+        float worldHeight = 12.5f;
         return projectionMatrix.identity().ortho(
                 -worldWidth/2, worldWidth/2,
                 -worldHeight/2, worldHeight/2,

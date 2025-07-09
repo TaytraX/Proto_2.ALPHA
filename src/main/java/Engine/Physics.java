@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -9.81f;
-    public static final float GROUND_FRICTION = 3.0f;
+    public static final float GROUND_FRICTION = 5.0f;
 
     public PlayerState update(PlayerState currentState, float deltaTime, List<AABB> platforms) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
