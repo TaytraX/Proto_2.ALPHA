@@ -61,7 +61,7 @@ public class AnimationController {
 
     private AnimationState checkPhysicsAnimations(PlayerState currentState) {
         if (!currentState.isGrounded()) {
-            if (currentState.velocity().y > 0.5f) return AnimationState.RISING;
+            if (currentState.velocity().y > 0.5f) return AnimationState.JUMPING;
             if (currentState.velocity().y < -0.5f) return AnimationState.FALLING;
         }
         return null;
