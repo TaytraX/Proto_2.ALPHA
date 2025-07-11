@@ -44,11 +44,11 @@ public class Physics {
                 // Si le joueur se déplace vers la droite et collision → collision par la gauche
                 if (newVelocity.x > 0) {
                     // Collision par la gauche du joueur
-                    newPosition.x = platform.getMinX() + PlayerState.PLAYER_SIZE.x;
+                    newPosition.x = currentState.position().x;
                     newVelocity.x = 0;
                 } else {
                     // Collision par la droite du joueur
-                    newPosition.x = platform.getMaxX() - PlayerState.PLAYER_SIZE.x;
+                    newPosition.x = currentState.position().x;
                     newVelocity.x = 0;
                 }
                 break;// une collision à la fois.
