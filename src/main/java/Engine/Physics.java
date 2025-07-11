@@ -7,9 +7,11 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -12.00f;
-    public static final float GROUND_FRICTION = 10.0f;
+    public static final float GROUND_FRICTION = 5.0f;
 
     public PlayerState update(PlayerState currentState, float deltaTime, List<AABB> platforms) {
+
+        applyPlayerActions(currentState, currentState.velocity(), deltaTime);
 
         PlayerState newState = resolveHorizontalCollisions(currentState, deltaTime, platforms, currentState.isGrounded());
         return applyPhysics(newState, newState.velocity(), deltaTime, platforms, newState.isGrounded());
@@ -36,8 +38,6 @@ public class Physics {
 
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
-
-        applyPlayerActions(currentState, newVelocity, deltaTime);
 
         newPosition.x += newVelocity.x * deltaTime;
 
@@ -78,43 +78,35 @@ public class Physics {
     }
 
     private PlayerState applyPhysics(PlayerState currentState, Vector2f velocity, float deltaTime, List<AABB> platforms, boolean isGrounded) {
+
+        Vector2f newPosition = new Vector2f(currentState.position());
         // Gravité
-        if(!currentState.isGrounded()) {
+        if(!isGrounded) {
             velocity.y += GRAVITY * deltaTime;
         }
 
-        Vector2f newVelocity = new Vector2f(currentState.velocity());
-        Vector2f newPosition = new Vector2f(currentState.position());
-
-        applyPlayerActions(currentState, newVelocity, deltaTime);
-
-        newPosition.y += newVelocity.y * deltaTime;
+        newPosition.y += velocity.y * deltaTime;
 
         AABB playerAABB = new AABB (newPosition, PlayerState.PLAYER_SIZE);
 
         for (AABB platform : platforms) {
             if (playerAABB.collidesWith(platform)) {
 
-                float overlapX = Math.min(playerAABB.getMaxX() - platform.getMinX(), platform.getMaxX() - playerAABB.getMinX());
-                float overlapY = Math.min(playerAABB.getMaxY() - platform.getMinY(), platform.getMaxY() - playerAABB.getMinY());
-
-                if (overlapX >= overlapY) {
-                    if (newVelocity.y > 0) {
+                    if (velocity.y > 0) {
 
                         newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
                     } else {
                         newPosition.y = platform.getMaxY() + PlayerState.PLAYER_SIZE.y;
                         isGrounded = true;
                     }
-                    newVelocity.y = 0;
+                    velocity.y = 0;
                 }
                 playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
             }
-        }
 
         return new PlayerState(
                 newPosition,
-                newVelocity,
+                velocity,
                 isGrounded,
                 currentState.animationState(),
                 currentState.facingRight(),
