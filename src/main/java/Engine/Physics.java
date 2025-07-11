@@ -8,9 +8,8 @@ import java.util.List;
 public class Physics {
     public static final float GRAVITY = -8.00f;
     public static final float GROUND_FRICTION = 5.0f;
-    float deltaTime = 0.016f;
 
-    public PlayerState update(PlayerState currentState,  List<AABB> platforms) {
+    public PlayerState update(PlayerState currentState,  List<AABB> platforms, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
         boolean isGrounded = false;
@@ -25,7 +24,7 @@ public class Physics {
                 // Si le joueur se déplace vers la droite et collision → collision par la gauche
                 if (newVelocity.x > 0) {
                     // Collision par la gauche du joueur
-                    newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
+                    newPosition.x = platform.getMinX() + PlayerState.PLAYER_SIZE.x;
                 } else {
                     // Collision par la droite du joueur
                     newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
@@ -41,21 +40,27 @@ public class Physics {
 
         newPosition.y += newVelocity.y * deltaTime;
 
+        GameLogger.debug("Position avant collision: " + newPosition);
+        GameLogger.debug("Velocity avant collision: " + newVelocity);
+
+
         playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
         for (AABB platform : platforms) {
             if(playerAABB.collidesWith(platform)) {
                 if (newVelocity.y <= 0) {
                     // Chute ou stationnaire → atterrissage
-                    newPosition.y = platform.getMaxY() - PlayerState.PLAYER_SIZE.y;
+                    newPosition.y = platform.getMaxY() + PlayerState.PLAYER_SIZE.y;
                     newVelocity.y = 0;
                     isGrounded = true;
                 } else {
-                    newPosition.y = platform.getMinY() + PlayerState.PLAYER_SIZE.y;
+                    // Collision par le haut (coup de tête)
+                    newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
                     newVelocity.y = 0;
                 }
                 break;// une collision à la fois.
             }
         }
+        GameLogger.debug("IsGrounded après collision: " + isGrounded);
 
         return new PlayerState(
                 newPosition,

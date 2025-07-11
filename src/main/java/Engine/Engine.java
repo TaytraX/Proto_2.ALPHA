@@ -132,7 +132,7 @@ public class Engine {
             return;
         }
 
-        PlayerState physicsState = physics.update(currentState, platforms);
+        PlayerState physicsState = physics.update(currentState, platforms, deltaTime);
 
         if (StateValidator.validatePlayerState(physicsState)) {
             GameLogger.error("État physique invalide, garde l'ancien état", null);
