@@ -9,7 +9,9 @@ import Render.Window;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
@@ -24,7 +26,8 @@ public class Engine {
     private long lastTime = System.currentTimeMillis();
     private float deltaTime = 0.016f;
 
-    public List<AABB> grounds = new ArrayList<>();
+    public List<AABB> platforms = new ArrayList<>();
+    Map<Integer, List<AABB>> grounds = new HashMap<>();
 
     public void start() {
         init();
@@ -77,9 +80,9 @@ public class Engine {
             physics = new Physics();
 
             // Dans init()
-            grounds.add(new AABB(new Vector2f(0, -5), new Vector2f(10, 1)));    // Sol principal
-            grounds.add(new AABB(new Vector2f(5, -2), new Vector2f(3, 0.5f)));  // Plateforme
-            grounds.add(new AABB(new Vector2f(-5, 0), new Vector2f(2, 0.5f)));  // Autre plateforme
+            platforms.add(new AABB(new Vector2f(0, -5), new Vector2f(10, 1)));    // Sol principal
+            platforms.add(new AABB(new Vector2f(5, -2), new Vector2f(3, 0.5f)));  // Plateforme
+            platforms.add(new AABB(new Vector2f(-5, 0), new Vector2f(2, 0.5f)));  // Autre plateforme
 
             GameLogger.info("Composants créés");
 
@@ -129,7 +132,7 @@ public class Engine {
             return;
         }
 
-        PlayerState physicsState = physics.update(currentState, deltaTime, grounds);
+        PlayerState physicsState = physics.update(currentState, deltaTime, platforms , grounds);
 
         if (StateValidator.validatePlayerState(physicsState)) {
             GameLogger.error("État physique invalide, garde l'ancien état", null);
