@@ -79,7 +79,7 @@ public class Camera {
         this.deadZone.set(x, y);
     }
 
-    // Reste du code inchangé...
+    // Reste du code inchangé..
     public Matrix4f getProjectionMatrix() {
         float worldWidth = 20.0f;
         float worldHeight = 12.5f;
