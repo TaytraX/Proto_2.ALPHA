@@ -125,7 +125,7 @@ public class Engine {
     public void update() {
         PlayerState currentState = ThreadManager.playerState.get();
 
-        if (StateValidator.validatePlayerState(currentState)) {
+        if (!StateValidator.validatePlayerState(currentState)) {
             GameLogger.error("État du joueur invalide, reset...", null);
             // Réinitialiser l'état au lieu de crasher
             resetPlayerState();
@@ -134,7 +134,7 @@ public class Engine {
 
         PlayerState physicsState = physics.update(currentState, platforms, deltaTime);
 
-        if (StateValidator.validatePlayerState(physicsState)) {
+        if (!StateValidator.validatePlayerState(physicsState)) {
             GameLogger.error("État physique invalide, garde l'ancien état", null);
             return; // Garde l'ancien état
         }

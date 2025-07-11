@@ -13,38 +13,13 @@ public class Physics {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
         boolean isGrounded = false;
+        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
 
         applyPlayerActions(currentState, newVelocity, deltaTime);
 
-        newPosition.x += newVelocity.x * deltaTime;
-
-        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-        for (AABB platform : platforms) {
-            if(playerAABB.collidesWith(platform)) {
-                // Si le joueur se déplace vers la droite et collision → collision par la gauche
-                if (newVelocity.x > 0) {
-                    // Collision par la gauche du joueur
-                    newPosition.x = platform.getMinX() + PlayerState.PLAYER_SIZE.x;
-                } else {
-                    // Collision par la droite du joueur
-                    newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
-                }
-
-                // ✅ IMPORTANT : Arrêter le mouvement horizontal
-                newVelocity.x = 0;
-                break;// une collision à la fois.
-            }
-        }
-
         newVelocity.y += GRAVITY * deltaTime;
-
         newPosition.y += newVelocity.y * deltaTime;
 
-        GameLogger.debug("Position avant collision: " + newPosition);
-        GameLogger.debug("Velocity avant collision: " + newVelocity);
-
-
-        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
         for (AABB platform : platforms) {
             if(playerAABB.collidesWith(platform)) {
                 if (newVelocity.y <= 0) {
@@ -60,7 +35,25 @@ public class Physics {
                 break;// une collision à la fois.
             }
         }
-        GameLogger.debug("IsGrounded après collision: " + isGrounded);
+
+        newPosition.x += newVelocity.x * deltaTime;
+
+        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+        for (AABB platform : platforms) {
+            if(playerAABB.collidesWith(platform)) {
+                // Si le joueur se déplace vers la droite et collision → collision par la gauche
+                if (newVelocity.x > 0) {
+                    // Collision par la gauche du joueur
+                    newPosition.x = platform.getMinX() + PlayerState.PLAYER_SIZE.x;
+                    newVelocity.x = 0;
+                } else {
+                    // Collision par la droite du joueur
+                    newPosition.x = platform.getMaxX() - PlayerState.PLAYER_SIZE.x;
+                    newVelocity.x = 0;
+                }
+                break;// une collision à la fois.
+            }
+        }
 
         return new PlayerState(
                 newPosition,
