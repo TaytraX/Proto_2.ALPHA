@@ -7,60 +7,65 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class Physics {
-    public static final float GRAVITY = -12.00f;
+    public static final float GRAVITY = -3.00f;
     public static final float GROUND_FRICTION = 5.0f;
     float deltaTime = 0.016f;
 
     public PlayerState update(PlayerState currentState,  List<AABB> platforms) {
-
-        applyPlayerActions(currentState, currentState.velocity(), deltaTime);
-
-        PlayerState newState = resolveHorizontalCollisions(currentState, deltaTime, platforms, currentState.isGrounded());
-        return applyPhysics(newState, newState.velocity(), deltaTime, platforms, newState.isGrounded());
-    }
-
-    private void applyPlayerActions(PlayerState state, Vector2f velocity, float deltaTime) {
-
-        // Mouvement horizontal basé sur les actions
-        if (state.moveLeft()) {
-            velocity.x = -state.moveSpeed();
-        } else if (state.moveRight()) {
-            velocity.x = state.moveSpeed();
-        } else if (state.isGrounded()) {
-            // Arrêt progressif au sol
-            velocity.x *= (1.0f - GROUND_FRICTION * deltaTime);
-        }
-        // Saut basé sur l'action
-        if (state.jump()) {
-            velocity.y = state.jumpForce();
-        }
-    }
-
-    private PlayerState resolveHorizontalCollisions(PlayerState currentState, float deltaTime, List<AABB> platforms, boolean isGrounded){
-
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
+        boolean isGrounded = false;
+
+        applyPlayerActions(currentState, newVelocity, deltaTime);
 
         newPosition.x += newVelocity.x * deltaTime;
 
-        AABB playerAABB = new AABB (newPosition, PlayerState.PLAYER_SIZE);
-
+        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
         for (AABB platform : platforms) {
-            if (playerAABB.collidesWith(platform)) {
+            if(playerAABB.collidesWith(platform)) {
 
-                float overlapX = Math.min(playerAABB.getMaxX() - platform.getMinX(), platform.getMaxX() - playerAABB.getMinX());
-                float overlapY = Math.min(playerAABB.getMaxY() - platform.getMinY(), platform.getMaxY() - playerAABB.getMinY());
+                //Calcule des penetrations
+                float penetrationFromLeft = playerAABB.getMaxX() - platform.getMinX();
+                float penetrationFromRight = playerAABB.getMaxX() - platform.getMinX();
 
-                if (overlapX < overlapY) {
-                    if (newVelocity.x > 0){
-                        newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
-                    }
-                    else newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
-
-                    newVelocity.x = 0;
+                // Prendre la plus petite pénétration (= la vraie direction)
+                if (penetrationFromLeft < penetrationFromRight) {
+                    // Collision par la gauche du joueur
+                    newPosition.x -= penetrationFromLeft;
+                } else {
+                    // Collision par la droite du joueur
+                    newPosition.x += penetrationFromRight;
                 }
+
+                // ✅ IMPORTANT : Arrêter le mouvement horizontal
+                newVelocity.x = 0;
+
+                // Mettre à jour l'AABB après correction
                 playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
             }
+
+            if(playerAABB.collidesWith(platform)) {
+
+                //Calcule des penetrations
+                float penetrationFromUp = playerAABB.getMaxX() - platform.getMinX();
+                float penetrationFromBound = playerAABB.getMaxX() - platform.getMinX();
+
+                // Prendre la plus petite pénétration (= la vraie direction)
+                 if (penetrationFromUp < penetrationFromBound) {
+                    // ✅ IMPORTANT : Arrêter le mouvement vertical
+                    newVelocity.y = 0;
+                } else {
+                    isGrounded = true;
+                }
+
+                // Mettre à jour l'AABB après correction
+                playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+            }
+        }
+
+        if (!isGrounded) {
+            // Collision par la droite du joueur
+            newPosition.y += GRAVITY * deltaTime;
         }
 
         return new PlayerState(
@@ -76,48 +81,23 @@ public class Physics {
                 currentState.jumpForce(),
                 currentState.timestamp()
         );
-
     }
 
-    private PlayerState applyPhysics(PlayerState currentState, Vector2f velocity, float deltaTime, List<AABB> platforms, boolean isGrounded) {
+    private void applyPlayerActions(PlayerState currentState, Vector2f velocity, float deltaTime) {
 
-        Vector2f newPosition = new Vector2f(currentState.position());
-        // Gravité
-        if(!isGrounded) {
-            velocity.y += GRAVITY * deltaTime;
+        // Mouvement horizontal basé sur les actions
+
+        if (currentState.moveLeft()) {
+            velocity.x = -currentState.moveSpeed();
+        } else if (currentState.moveRight()) {
+            velocity.x = currentState.moveSpeed();
+        } else if (currentState.isGrounded()) {
+            velocity.x *= (1.0f - GROUND_FRICTION * deltaTime);
         }
 
-        newPosition.y += velocity.y * deltaTime;
-
-        AABB playerAABB = new AABB (newPosition, PlayerState.PLAYER_SIZE);
-
-        for (AABB platform : platforms) {
-            if (playerAABB.collidesWith(platform)) {
-
-                    if (velocity.y > 0) {
-
-                        newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
-                    } else {
-                        newPosition.y = platform.getMaxY() + PlayerState.PLAYER_SIZE.y;
-                        isGrounded = true;
-                    }
-                    velocity.y = 0;
-                }
-                playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-            }
-
-        return new PlayerState(
-                newPosition,
-                velocity,
-                isGrounded,
-                currentState.animationState(),
-                currentState.facingRight(),
-                currentState.moveLeft(),
-                currentState.moveRight(),
-                currentState.jump(),
-                currentState.moveSpeed(),
-                currentState.jumpForce(),
-                currentState.timestamp()
-        );
+        // Saut (simple impulsion)
+        if (currentState.jump()) {
+            velocity.y = currentState.jumpForce();
+        }
     }
 }
