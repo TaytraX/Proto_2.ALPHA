@@ -7,16 +7,59 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -12.00f;
-    public static final float GROUND_FRICTION = 5.0f;
-    boolean isGrounded = false;
+    public static final float GROUND_FRICTION = 10.0f;
 
     public PlayerState update(PlayerState currentState, float deltaTime, List<AABB> platforms) {
+
+        PlayerState newState = resolveHorizontalCollisions(currentState, deltaTime, platforms, currentState.isGrounded());
+        return applyPhysics(newState, newState.velocity(), deltaTime, platforms, newState.isGrounded());
+    }
+
+    private void applyPlayerActions(PlayerState state, Vector2f velocity, float deltaTime) {
+
+        // Mouvement horizontal basé sur les actions
+        if (state.moveLeft()) {
+            velocity.x = -state.moveSpeed();
+        } else if (state.moveRight()) {
+            velocity.x = state.moveSpeed();
+        } else if (state.isGrounded()) {
+            // Arrêt progressif au sol
+            velocity.x *= (1.0f - GROUND_FRICTION * deltaTime);
+        }
+        // Saut basé sur l'action
+        if (state.jump()) {
+            velocity.y = state.jumpForce();
+        }
+    }
+
+    private PlayerState resolveHorizontalCollisions(PlayerState currentState, float deltaTime, List<AABB> platforms, boolean isGrounded){
 
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
 
-        applyPlayerActions(currentState, newVelocity, deltaTime, platforms);
-        applyPhysics(currentState, newVelocity, deltaTime, platforms);
+        applyPlayerActions(currentState, newVelocity, deltaTime);
+
+        newPosition.x += newVelocity.x * deltaTime;
+
+        AABB playerAABB = new AABB (newPosition, PlayerState.PLAYER_SIZE);
+
+        for (AABB platform : platforms) {
+            if (playerAABB.collidesWith(platform)) {
+
+                float overlapX = Math.min(playerAABB.getMaxX() - platform.getMinX(), platform.getMaxX() - playerAABB.getMinX());
+                float overlapY = Math.min(playerAABB.getMaxY() - platform.getMinY(), platform.getMaxY() - playerAABB.getMinY());
+
+                if (overlapX < overlapY) {
+                    if (newVelocity.x > 0){
+                        newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
+                    }
+                    else newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
+
+                    newVelocity.x = 0;
+                }
+                playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+            }
+        }
 
         return new PlayerState(
                 newPosition,
@@ -31,71 +74,19 @@ public class Physics {
                 currentState.jumpForce(),
                 currentState.timestamp()
         );
+
     }
 
-    private void applyPlayerActions(PlayerState state, Vector2f velocity, float deltaTime, List<AABB> platforms) {
-
-        Vector2f newVelocity = new Vector2f(state.velocity().x);
-        Vector2f newPosition = new Vector2f(state.position());
-
-        // Mouvement horizontal basé sur les actions
-        if (state.moveLeft()) {
-            velocity.x = -state.moveSpeed();
-        } else if (state.moveRight()) {
-            velocity.x = state.moveSpeed();
-        } else if (state.isGrounded()) {
-            // Arrêt progressif au sol
-            velocity.x *= (1.0f - GROUND_FRICTION * deltaTime);
-        }
-
-        newPosition.x += newVelocity.x * deltaTime;
-
-        AABB playerAABB = new AABB (newPosition, PlayerState.PLAYER_SIZE);
-
-        for (AABB platform : platforms) {
-            if (playerAABB.collidesWith(platform)) {
-
-                float overlapX = Math.min(playerAABB.getMaxX() - platform.getMinX(), platform.getMaxX() - playerAABB.getMinX());
-                float overlapY = Math.min(playerAABB.getMaxY() - platform.getMinY(), platform.getMaxY() - playerAABB.getMinY());
-
-                if (overlapX < overlapY) {
-                    if (newVelocity.x > 0) {
-                        newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
-                    } else newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
-
-                    newVelocity.x = 0;
-                }
-            }
-            playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-        }
-        new PlayerState(
-                newPosition,
-                newVelocity,
-                isGrounded,
-                state.animationState(),
-                state.facingRight(),
-                state.moveLeft(),
-                state.moveRight(),
-                state.jump(),
-                state.moveSpeed(),
-                state.jumpForce(),
-                state.timestamp()
-        );
-    }
-
-    private void applyPhysics(PlayerState state, Vector2f velocity, float deltaTime, List<AABB> platforms) {
-        Vector2f newVelocity = new Vector2f(state.velocity().x);
-        Vector2f newPosition = new Vector2f(state.position());
-
-        // Saut basé sur l'action
-        if (state.jump()) {
-            velocity.y = state.jumpForce();
-        }
-
+    private PlayerState applyPhysics(PlayerState currentState, Vector2f velocity, float deltaTime, List<AABB> platforms, boolean isGrounded) {
         // Gravité
-        if(!state.isGrounded()) {
+        if(!currentState.isGrounded()) {
             velocity.y += GRAVITY * deltaTime;
         }
+
+        Vector2f newVelocity = new Vector2f(currentState.velocity());
+        Vector2f newPosition = new Vector2f(currentState.position());
+
+        applyPlayerActions(currentState, newVelocity, deltaTime);
 
         newPosition.y += newVelocity.y * deltaTime;
 
@@ -120,18 +111,19 @@ public class Physics {
                 playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
             }
         }
-        new PlayerState(
+
+        return new PlayerState(
                 newPosition,
                 newVelocity,
                 isGrounded,
-                state.animationState(),
-                state.facingRight(),
-                state.moveLeft(),
-                state.moveRight(),
-                state.jump(),
-                state.moveSpeed(),
-                state.jumpForce(),
-                state.timestamp()
+                currentState.animationState(),
+                currentState.facingRight(),
+                currentState.moveLeft(),
+                currentState.moveRight(),
+                currentState.jump(),
+                currentState.moveSpeed(),
+                currentState.jumpForce(),
+                currentState.timestamp()
         );
     }
 }

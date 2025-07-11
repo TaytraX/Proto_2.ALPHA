@@ -133,8 +133,8 @@ public class RenderPlayer implements Renderable {
 
             AABB playerAABB = currentState.getAABB();
             transformationMatrix.identity().translation(
-                    playerAABB.getMinX() + playerAABB.size().x,
-                    playerAABB.getMinY() + playerAABB.size().y,
+                    playerAABB.getMinX() + playerAABB.halfSize().x,
+                    playerAABB.getMinY() + playerAABB.halfSize().y,
                     0.0f
             );
 
