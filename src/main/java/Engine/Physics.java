@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class Physics {
-    public static final float GRAVITY = -3.00f;
+    public static final float GRAVITY = -8.00f;
     public static final float GROUND_FRICTION = 5.0f;
     float deltaTime = 0.016f;
 
@@ -23,49 +23,39 @@ public class Physics {
         AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
         for (AABB platform : platforms) {
             if(playerAABB.collidesWith(platform)) {
-
-                //Calcule des penetrations
-                float penetrationFromLeft = playerAABB.getMaxX() - platform.getMinX();
-                float penetrationFromRight = playerAABB.getMaxX() - platform.getMinX();
-
-                // Prendre la plus petite pénétration (= la vraie direction)
-                if (penetrationFromLeft < penetrationFromRight) {
+                // Si le joueur se déplace vers la droite et collision → collision par la gauche
+                if (newVelocity.x > 0) {
                     // Collision par la gauche du joueur
-                    newPosition.x -= penetrationFromLeft;
+                    newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
                 } else {
                     // Collision par la droite du joueur
-                    newPosition.x += penetrationFromRight;
+                    newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
                 }
 
                 // ✅ IMPORTANT : Arrêter le mouvement horizontal
                 newVelocity.x = 0;
-
-                // Mettre à jour l'AABB après correction
-                playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-            }
-
-            if(playerAABB.collidesWith(platform)) {
-
-                //Calcule des penetrations
-                float penetrationFromUp = playerAABB.getMaxX() - platform.getMinX();
-                float penetrationFromBound = playerAABB.getMaxX() - platform.getMinX();
-
-                // Prendre la plus petite pénétration (= la vraie direction)
-                 if (penetrationFromUp < penetrationFromBound) {
-                    // ✅ IMPORTANT : Arrêter le mouvement vertical
-                    newVelocity.y = 0;
-                } else {
-                    isGrounded = true;
-                }
-
-                // Mettre à jour l'AABB après correction
-                playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+                break;// une collision à la fois.
             }
         }
 
-        if (!isGrounded) {
-            // Collision par la droite du joueur
-            newPosition.y += GRAVITY * deltaTime;
+        newVelocity.y += GRAVITY * deltaTime;
+
+        newPosition.y += newVelocity.y * deltaTime;
+
+        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+        for (AABB platform : platforms) {
+            if(playerAABB.collidesWith(platform)) {
+                if (newVelocity.y <= 0) {
+                    // Chute ou stationnaire → atterrissage
+                    newPosition.y = platform.getMaxY() - PlayerState.PLAYER_SIZE.y;
+                    newVelocity.y = 0;
+                    isGrounded = true;
+                } else {
+                    newPosition.y = platform.getMinY() + PlayerState.PLAYER_SIZE.y;
+                    newVelocity.y = 0;
+                }
+                break;// une collision à la fois.
+            }
         }
 
         return new PlayerState(
