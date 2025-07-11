@@ -2,14 +2,16 @@ package Engine;
 
 import Entity.PlayerState;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -12.00f;
     public static final float GROUND_FRICTION = 5.0f;
+    float deltaTime = 0.016f;
 
-    public PlayerState update(PlayerState currentState, float deltaTime, List<AABB> platforms) {
+    public PlayerState update(PlayerState currentState,  List<AABB> platforms) {
 
         applyPlayerActions(currentState, currentState.velocity(), deltaTime);
 

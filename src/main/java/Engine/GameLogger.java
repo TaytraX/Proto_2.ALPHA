@@ -1,7 +1,7 @@
 package Engine;
 
 public class GameLogger {
-    private static final boolean DEBUG = true;
+    public static final boolean DEBUG = true;
 
     public static void info(String message) {
         if (DEBUG) System.out.println("[INFO] " + message);

@@ -155,7 +155,7 @@ public class RenderPlayer implements Renderable {
             if (animationTextures == null || animationTextures.isEmpty()) {
                 GameLogger.error("Textures d'animation manquantes !", null);
                 return;
-            };
+            }
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture.getTextureID());

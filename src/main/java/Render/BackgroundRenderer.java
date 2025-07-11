@@ -1,20 +1,13 @@
 package Render;
 
-import Engine.AABB;
 import Engine.GameLogger;
 import Engine.Renderable;
-import Engine.ThreadManager;
-import Entity.AnimationController;
-import Entity.AnimationState;
 import Entity.Camera;
-import Entity.PlayerState;
-import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL15C.*;
 import static org.lwjgl.opengl.GL15C.glBindBuffer;
 import static org.lwjgl.opengl.GL15C.glBufferData;
@@ -26,9 +19,6 @@ import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 public class BackgroundRenderer implements Renderable {
 
     private int VAO;
-
-    private final FloatBuffer matrixBuffer = org.lwjgl.BufferUtils.createFloatBuffer(16);
-    private final Matrix4f transformationMatrix = new Matrix4f();
     private final Shader shader;
 
     public BackgroundRenderer() {
