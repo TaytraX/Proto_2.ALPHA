@@ -1,7 +1,9 @@
 package Entity;
 
+import Engine.ThreadManager;
 import Laucher.Main;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -23,12 +25,15 @@ public class Player {
         boolean moveRight = rightPressed && !leftPressed;
         boolean jump = jumpPressed && state.isGrounded();
 
+        // 3. Appliquer les mouvements
+        Vector2f newVelocity = applyMovement(state, moveLeft, moveRight, jump);
+
         boolean facingRight = moveRight || (!moveLeft && state.facingRight());
 
         // Retourner le state avec les actions déterminées
         return new PlayerState(
                 state.position(),
-                state.velocity(),
+                newVelocity,
                 state.isGrounded(),
                 state.animationState(),
                 facingRight,
@@ -39,5 +44,23 @@ public class Player {
                 state.jumpForce(),
                 System.currentTimeMillis()
         );
+    }
+
+    public Vector2f applyMovement(PlayerState state, boolean moveLeft, boolean moveRight, boolean jump) {
+
+        // Calculer nouvelle vitesse selon les inputs
+        Vector2f newVelocity = new Vector2f(state.velocity());
+
+        if (moveLeft) {
+            newVelocity.x = -state.moveSpeed();
+        } else if (moveRight) {
+            newVelocity.x = state.moveSpeed();
+        }
+        // Pas de friction ici - Physics s'en charge
+
+        if (jump) {
+            newVelocity.y = state.jumpForce();
+        }
+        return newVelocity;
     }
 }

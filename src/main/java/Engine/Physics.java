@@ -14,7 +14,6 @@ public class Physics {
         Vector2f newPosition = new Vector2f(currentState.position());
         boolean isGrounded = false;
 
-        applyPlayerActions(currentState, newVelocity, deltaTime);
         AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
 
         newVelocity.y += GRAVITY * deltaTime;
@@ -49,26 +48,5 @@ public class Physics {
                 currentState.jumpForce(),
                 currentState.timestamp()
         );
-    }
-
-    private void applyPlayerActions(PlayerState currentState, Vector2f velocity, float deltaTime) {
-
-        // Mouvement horizontal basé sur les actions
-
-        if (currentState.moveLeft()) {
-            velocity.x = -currentState.moveSpeed();
-            System.out.println("Position du joueur " + velocity.x);
-        } else if (currentState.moveRight()) {
-            velocity.x = currentState.moveSpeed();
-            System.out.println("Position du joueur " + velocity.x);
-        } else if (currentState.isGrounded()) {
-            velocity.x *= (1.0f - GROUND_FRICTION * deltaTime);
-            System.out.println("Position du joueur " + velocity.x);
-        }
-
-        // Saut (simple impulsion)
-        if (currentState.jump()) {
-            velocity.y = currentState.jumpForce();
-        }
     }
 }

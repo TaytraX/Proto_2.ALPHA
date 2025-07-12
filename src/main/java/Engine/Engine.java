@@ -141,16 +141,6 @@ public class Engine {
             return;
         }
 
-        PlayerState physicsState = physics.update(currentState, horizontalPlatforms, verticalWalls, deltaTime);
-        System.out.println("APRÈS Physics - Position: " + physicsState.position().x);
-
-       /* if (!StateValidator.validatePlayerState(physicsState)) {
-            GameLogger.error("État physique invalide, garde l'ancien état", null);
-            return; // Garde l'ancien état
-        }*/
-
-        ThreadManager.playerState.set(physicsState);
-
         PlayerState finalState = ThreadManager.playerState.get();
         System.out.println("APRÈS Set - Position: " + finalState.position().x);
     }
