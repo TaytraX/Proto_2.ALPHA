@@ -24,7 +24,7 @@ public class Player {
 
         boolean moveLeft = leftPressed && !rightPressed;
         boolean moveRight = rightPressed && !leftPressed;
-        boolean jump = jumpPressed && state.isGrounded();
+        boolean jump = jumpPressed;
 
         // 3. Appliquer les mouvements
         Vector2f newPosition = applyMovement(state, moveLeft, moveRight, jump, deltaTime);

@@ -110,7 +110,14 @@ public class Engine {
     }
 
     public void update() {
-        player.update(playerState, deltaTime);
+        // 1. Récupérer l'état actuel
+        PlayerState currentState = ThreadManager.playerState.get();
+
+        // 2. Traiter les inputs et mouvements
+        PlayerState updatedState = player.update(currentState, deltaTime);
+
+        // 4. Sauvegarder le nouvel état
+        ThreadManager.playerState.set(updatedState);
     }
 
     private void resetPlayerState() {
