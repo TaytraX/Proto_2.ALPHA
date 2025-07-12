@@ -9,18 +9,18 @@ public class Physics {
     public static final float GRAVITY = -8.00f;
     public static final float GROUND_FRICTION = 5.0f;
 
-    public PlayerState update(PlayerState currentState,  List<AABB> platforms, float deltaTime) {
+    public PlayerState update(PlayerState currentState,  List<AABB> horizontalPlatforms, List<AABB> verticalWalls, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
         boolean isGrounded = false;
-        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
 
         applyPlayerActions(currentState, newVelocity, deltaTime);
+        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
 
         newVelocity.y += GRAVITY * deltaTime;
         newPosition.y += newVelocity.y * deltaTime;
 
-        for (AABB platform : platforms) {
+        for (AABB platform : horizontalPlatforms) {
             if(playerAABB.collidesWith(platform)) {
                 if (newVelocity.y <= 0) {
                     // Chute ou stationnaire → atterrissage
@@ -31,25 +31,6 @@ public class Physics {
                     // Collision par le haut (coup de tête)
                     newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
                     newVelocity.y = 0;
-                }
-                break;// une collision à la fois.
-            }
-        }
-
-        newPosition.x += newVelocity.x * deltaTime;
-
-        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-        for (AABB platform : platforms) {
-            if(playerAABB.collidesWith(platform)) {
-                // Si le joueur se déplace vers la droite et collision → collision par la gauche
-                if (newVelocity.x > 0) {
-                    // Collision par la gauche du joueur
-                    newPosition.x = currentState.position().x;
-                    newVelocity.x = 0;
-                } else {
-                    // Collision par la droite du joueur
-                    newPosition.x = currentState.position().x;
-                    newVelocity.x = 0;
                 }
                 break;// une collision à la fois.
             }
@@ -76,10 +57,13 @@ public class Physics {
 
         if (currentState.moveLeft()) {
             velocity.x = -currentState.moveSpeed();
+            System.out.println("Position du joueur " + velocity.x);
         } else if (currentState.moveRight()) {
             velocity.x = currentState.moveSpeed();
+            System.out.println("Position du joueur " + velocity.x);
         } else if (currentState.isGrounded()) {
             velocity.x *= (1.0f - GROUND_FRICTION * deltaTime);
+            System.out.println("Position du joueur " + velocity.x);
         }
 
         // Saut (simple impulsion)

@@ -26,7 +26,8 @@ public class Engine {
     private long lastTime = System.currentTimeMillis();
     private float deltaTime = 0.016f;
 
-    public List<AABB> platforms = new ArrayList<>();
+    List<AABB> horizontalPlatforms = new ArrayList<>(); // Pour les collisions Y
+    List<AABB> verticalWalls = new ArrayList<>();
     Map<Integer, List<AABB>> grounds = new HashMap<>();
 
     public void start() {
@@ -79,10 +80,12 @@ public class Engine {
             player = new Player();
             physics = new Physics();
 
-            // Dans init()
-            platforms.add(new AABB(new Vector2f(0, -5), new Vector2f(10, 1)));    // Sol principal
-            platforms.add(new AABB(new Vector2f(5, -2), new Vector2f(3, 0.5f)));  // Plateforme
-            platforms.add(new AABB(new Vector2f(-5, 0), new Vector2f(2, 0.5f)));  // Autre plateforme
+
+            horizontalPlatforms.add(new AABB(new Vector2f(0, -5), new Vector2f(10, 1)));   // Sol
+            horizontalPlatforms.add(new AABB(new Vector2f(5, -2), new Vector2f(3, 0.5f))); // Plateforme
+
+            // Ajouter des murs si nécessaire
+            verticalWalls.add(new AABB(new Vector2f(15, 0), new Vector2f(1, 10)));
 
             GameLogger.info("Composants créés");
 
@@ -118,28 +121,38 @@ public class Engine {
 
     private void handleInput() {
         PlayerState currentState = ThreadManager.playerState.get();
+        System.out.println("AVANT input() - Position: " + currentState.position().x);
+
         PlayerState inputState = player.input(currentState);
+        System.out.println("APRÈS input() - Position: " + inputState.position().x);
+        System.out.println("APRÈS input() - Velocity: " + inputState.velocity().x);
+
         ThreadManager.playerState.set(inputState);
     }
 
     public void update() {
         PlayerState currentState = ThreadManager.playerState.get();
+        System.out.println("AVANT Physics - Position: " + currentState.position().x);
 
         if (!StateValidator.validatePlayerState(currentState)) {
             GameLogger.error("État du joueur invalide, reset...", null);
             // Réinitialiser l'état au lieu de crasher
-            resetPlayerState();
+            //resetPlayerState();
             return;
         }
 
-        PlayerState physicsState = physics.update(currentState, platforms, deltaTime);
+        PlayerState physicsState = physics.update(currentState, horizontalPlatforms, verticalWalls, deltaTime);
+        System.out.println("APRÈS Physics - Position: " + physicsState.position().x);
 
-        if (!StateValidator.validatePlayerState(physicsState)) {
+       /* if (!StateValidator.validatePlayerState(physicsState)) {
             GameLogger.error("État physique invalide, garde l'ancien état", null);
             return; // Garde l'ancien état
-        }
+        }*/
 
         ThreadManager.playerState.set(physicsState);
+
+        PlayerState finalState = ThreadManager.playerState.get();
+        System.out.println("APRÈS Set - Position: " + finalState.position().x);
     }
 
     private void resetPlayerState() {
