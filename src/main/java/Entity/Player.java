@@ -1,5 +1,6 @@
 package Entity;
 
+import Engine.AABB;
 import Engine.ThreadManager;
 import Laucher.Main;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ public class Player {
         windowId = Main.getWindow().getWindowHandle();
     }
 
-    public PlayerState input(@NotNull PlayerState state) {
+    public PlayerState update(@NotNull PlayerState state, float deltaTime) {
         // Détection des touches
         boolean leftPressed = glfwGetKey(windowId, GLFW_KEY_A) == GLFW_PRESS;
         boolean rightPressed = glfwGetKey(windowId, GLFW_KEY_D) == GLFW_PRESS;
@@ -26,14 +27,14 @@ public class Player {
         boolean jump = jumpPressed && state.isGrounded();
 
         // 3. Appliquer les mouvements
-        Vector2f newVelocity = applyMovement(state, moveLeft, moveRight, jump);
+        Vector2f newPosition = applyMovement(state, moveLeft, moveRight, jump, deltaTime);
 
         boolean facingRight = moveRight || (!moveLeft && state.facingRight());
 
         // Retourner le state avec les actions déterminées
         return new PlayerState(
-                state.position(),
-                newVelocity,
+                newPosition,
+                state.velocity(),
                 state.isGrounded(),
                 state.animationState(),
                 facingRight,
@@ -46,21 +47,21 @@ public class Player {
         );
     }
 
-    public Vector2f applyMovement(PlayerState state, boolean moveLeft, boolean moveRight, boolean jump) {
+    public Vector2f applyMovement(PlayerState state, boolean moveLeft, boolean moveRight, boolean jump, float deltaTime) {
 
         // Calculer nouvelle vitesse selon les inputs
-        Vector2f newVelocity = new Vector2f(state.velocity());
+        Vector2f newPosition = new Vector2f(state.position());
 
         if (moveLeft) {
-            newVelocity.x = -state.moveSpeed();
+            newPosition.x -= state.moveSpeed() * deltaTime;
         } else if (moveRight) {
-            newVelocity.x = state.moveSpeed();
+            newPosition.x += state.moveSpeed() * deltaTime;
         }
         // Pas de friction ici - Physics s'en charge
 
         if (jump) {
-            newVelocity.y = state.jumpForce();
+            newPosition.y += state.jumpForce() * deltaTime;
         }
-        return newVelocity;
+        return newPosition;
     }
 }

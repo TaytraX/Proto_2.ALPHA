@@ -75,17 +75,8 @@ public class Engine {
             window.init();
             Renderer = new Renderer();
             Renderer.initialize();
-            playerState = ThreadManager.playerState.get();
             camera = new Camera();
             player = new Player();
-            physics = new Physics();
-
-
-            horizontalPlatforms.add(new AABB(new Vector2f(0, -5), new Vector2f(10, 1)));   // Sol
-            horizontalPlatforms.add(new AABB(new Vector2f(5, -2), new Vector2f(3, 0.5f))); // Plateforme
-
-            // Ajouter des murs si nécessaire
-            verticalWalls.add(new AABB(new Vector2f(15, 0), new Vector2f(1, 10)));
 
             GameLogger.info("Composants créés");
 
@@ -112,47 +103,17 @@ public class Engine {
 
                 deltaTime = Math.min(deltaTime, 0.016f);
 
-                handleInput();
                 update();
                 render();
             }
         cleanup();
     }
 
-    private void handleInput() {
-        PlayerState currentState = ThreadManager.playerState.get();
-        System.out.println("AVANT input() - Position: " + currentState.position().x);
-
-        PlayerState inputState = player.input(currentState);
-        System.out.println("APRÈS input() - Position: " + inputState.position().x);
-        System.out.println("APRÈS input() - Velocity: " + inputState.velocity().x);
-
-        ThreadManager.playerState.set(inputState);
-    }
-
     public void update() {
-        PlayerState currentState = ThreadManager.playerState.get();
-        System.out.println("AVANT Physics - Position: " + currentState.position().x);
-
-        if (!StateValidator.validatePlayerState(currentState)) {
-            GameLogger.error("État du joueur invalide, reset...", null);
-            // Réinitialiser l'état au lieu de crasher
-            //resetPlayerState();
-            return;
-        }
-
-        PlayerState finalState = ThreadManager.playerState.get();
-        System.out.println("APRÈS Set - Position: " + finalState.position().x);
+        player.update(playerState, deltaTime);
     }
 
     private void resetPlayerState() {
-        PlayerState safeState = new PlayerState(
-                new Vector2f(0, 0), new Vector2f(0, 0), false,
-                AnimationState.IDLE, true, false, false, false,
-                5.0f, 10.0f, System.currentTimeMillis()
-        );
-        ThreadManager.playerState.set(safeState);
-        GameLogger.info("PlayerState réinitialisé");
     }
 
     public void cleanup() {
