@@ -1,7 +1,5 @@
 package Entity;
 
-import Engine.AABB;
-import Engine.ThreadManager;
 import Laucher.Main;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
@@ -24,17 +22,17 @@ public class Player {
 
         boolean moveLeft = leftPressed && !rightPressed;
         boolean moveRight = rightPressed && !leftPressed;
-        boolean jump = jumpPressed;
+        boolean jump = jumpPressed && state.isGrounded();
 
         // 3. Appliquer les mouvements
-        Vector2f newPosition = applyMovement(state, moveLeft, moveRight, jump, deltaTime);
+        Vector2f newVelocity = applyMovement(state, moveLeft, moveRight, jump, deltaTime);
 
         boolean facingRight = moveRight || (!moveLeft && state.facingRight());
 
         // Retourner le state avec les actions déterminées
         return new PlayerState(
-                newPosition,
-                state.velocity(),
+                state.position(),
+                newVelocity,
                 state.isGrounded(),
                 state.animationState(),
                 facingRight,
@@ -50,18 +48,18 @@ public class Player {
     public Vector2f applyMovement(PlayerState state, boolean moveLeft, boolean moveRight, boolean jump, float deltaTime) {
 
         // Calculer nouvelle vitesse selon les inputs
-        Vector2f newPosition = new Vector2f(state.position());
+        Vector2f newVelocity = new Vector2f(state.velocity());
 
         if (moveLeft) {
-            newPosition.x -= state.moveSpeed() * deltaTime;
+            newVelocity.x -= state.moveSpeed() * deltaTime;
         } else if (moveRight) {
-            newPosition.x += state.moveSpeed() * deltaTime;
+            newVelocity.x += state.moveSpeed() * deltaTime;
         }
         // Pas de friction ici - Physics s'en charge
 
         if (jump) {
-            newPosition.y += state.jumpForce() * deltaTime;
+            newVelocity.y += state.jumpForce() * deltaTime;
         }
-        return newPosition;
+        return newVelocity;
     }
 }

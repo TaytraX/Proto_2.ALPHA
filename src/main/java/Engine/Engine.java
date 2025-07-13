@@ -65,6 +65,11 @@ public class Engine {
             ThreadManager.playerState.set(initialState);
             GameLogger.info("PlayerState initialisé");
 
+            // Plateforme de base
+            horizontalPlatforms.add(new AABB(new Vector2f(0, -2), new Vector2f(5, 0.5f)));
+            // Plateforme supplémentaire
+            horizontalPlatforms.add(new AABB(new Vector2f(3, 0), new Vector2f(2, 0.5f)));
+
             // Vérification que l'état est bien défini
             PlayerState test = ThreadManager.playerState.get();
             if (test == null) {
@@ -77,6 +82,7 @@ public class Engine {
             Renderer.initialize();
             camera = new Camera();
             player = new Player();
+            physics = new Physics();
 
             GameLogger.info("Composants créés");
 
@@ -114,10 +120,12 @@ public class Engine {
         PlayerState currentState = ThreadManager.playerState.get();
 
         // 2. Traiter les inputs et mouvements
-        PlayerState updatedState = player.update(currentState, deltaTime);
+        PlayerState afterInputs  = player.update(currentState, deltaTime);
+        // 2. Physics applique velocity à position
+        PlayerState afterPhysics = physics.update(afterInputs,horizontalPlatforms, verticalWalls, deltaTime);
 
         // 4. Sauvegarder le nouvel état
-        ThreadManager.playerState.set(updatedState);
+        ThreadManager.playerState.set(afterPhysics);
     }
 
     private void resetPlayerState() {
