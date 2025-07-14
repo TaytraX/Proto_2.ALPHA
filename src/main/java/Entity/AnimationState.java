@@ -16,7 +16,7 @@ public enum AnimationState {
     WALKING_LEFT(3, 0),
     WALKING_RIGHT(3, 0),
 
-    // Priorité 4 - Défaut
+    // Priorité 4 - Par-Défaut
     IDLE(4, 0);
 
     private final int priority;

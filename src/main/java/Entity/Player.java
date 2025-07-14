@@ -34,11 +34,14 @@ public class Player {
                 state.position(),
                 newVelocity,
                 state.isGrounded(),
+                state.wasGrounded(),
+                state.previousVelocity(),
                 state.animationState(),
                 facingRight,
                 moveLeft,      // ← Action déterminée
                 moveRight,     // ← Action déterminée
-                jump,          // ← Action déterminée
+                jump,
+                state.moveSpeed(), // ← Action déterminée
                 state.moveSpeed(),
                 state.jumpForce(),
                 System.currentTimeMillis()
@@ -46,20 +49,26 @@ public class Player {
     }
 
     public Vector2f applyMovement(PlayerState state, boolean moveLeft, boolean moveRight, boolean jump, float deltaTime) {
-
-        // Calculer nouvelle vitesse selon les inputs
         Vector2f newVelocity = new Vector2f(state.velocity());
 
-        if (moveLeft) {
-            newVelocity.x -= state.moveSpeed() * deltaTime;
-        } else if (moveRight) {
-            newVelocity.x += state.moveSpeed() * deltaTime;
-        }
-        // Pas de friction ici - Physics s'en charge
+        // Constantes d'accélération
+        final float ACCELERATION = state.accelerationSpeed();  // Vitesse d'accélération
+        final float MAX_SPEED = state.moveSpeed();  // Décélération quand pas d'input
 
+        // Gestion accélération horizontale
+        if (moveLeft) {
+            newVelocity.x -= ACCELERATION;
+            newVelocity.x -= MAX_SPEED * deltaTime; // Limite gauche
+        } else if (moveRight) {
+            newVelocity.x += ACCELERATION;
+            newVelocity.x += MAX_SPEED * deltaTime;  // Limite droite
+        }
+
+        // Saut inchangé
         if (jump) {
             newVelocity.y += state.jumpForce() * deltaTime;
         }
+
         return newVelocity;
     }
 }

@@ -53,7 +53,7 @@ public class AnimationController {
 
     private AnimationState checkCriticalAnimations(PlayerState currentState) {
         // LANDING : vient d'atterrir avec vitesse élevée
-        if (currentState.isGrounded() && Math.abs(currentState.velocity().y) > 2.0f) {
+        if (currentState.isGrounded() && !currentState.wasGrounded() && Math.abs(currentState.previousVelocity()) > 0.2f) {
             return AnimationState.LANDING;
         }
         return null;
@@ -61,7 +61,11 @@ public class AnimationController {
 
     private AnimationState checkPhysicsAnimations(PlayerState currentState) {
         if (!currentState.isGrounded()) {
-            if (currentState.velocity().y > 0.5f) return AnimationState.JUMPING;
+            if (currentState.velocity().y > 0.5f) {
+                if (currentState.moveRight()) return AnimationState.JUMPING_RIGHT;
+                if (currentState.moveLeft()) return AnimationState.JUMPING_LEFT;
+                return AnimationState.JUMPING;
+            }
             if (currentState.velocity().y < -0.5f) return AnimationState.FALLING;
         }
         return null;
@@ -76,9 +80,12 @@ public class AnimationController {
         }
 
         // Mouvement normal
+        if (currentState.jump() && currentState.moveRight()) return AnimationState.JUMPING_RIGHT;
+        if (currentState.jump() && currentState.moveLeft()) return AnimationState.JUMPING_LEFT;
+        if (currentState.jump()) return AnimationState.JUMPING;
+
         if (currentState.moveLeft()) return AnimationState.WALKING_LEFT;
         if (currentState.moveRight()) return AnimationState.WALKING_RIGHT;
-        if (currentState.jump()) return AnimationState.JUMPING;
 
         return null;
     }

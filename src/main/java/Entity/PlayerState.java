@@ -7,11 +7,14 @@ public record PlayerState(
         Vector2f position,
         Vector2f velocity,
         boolean isGrounded,
+        boolean wasGrounded,
+        float previousVelocity,  // pour capturer la vélocité d'impact
         AnimationState animationState,
         boolean facingRight,
         boolean moveLeft,
         boolean moveRight,
         boolean jump,
+        float accelerationSpeed,
         float moveSpeed,         // ✅ AJOUTÉ (optionnel)
         float jumpForce,
         long timestamp

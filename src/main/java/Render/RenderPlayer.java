@@ -47,7 +47,7 @@ public class RenderPlayer implements Renderable {
                     AnimationState.WALKING_LEFT,  new Texture("player_Walking_Left"),
                     AnimationState.JUMPING,       new Texture("player_jump"),
                     AnimationState.JUMPING_LEFT,  new Texture("player_Left_jump"),
-                    AnimationState.JUMPING_RIGHT, new Texture("player_Right_jump"),
+                    AnimationState.JUMPING_RIGHT, new Texture("player_Rigth_jump"),
                     AnimationState.LANDING,       new Texture("player_isLanding"),
                     AnimationState.SKIDDING,      new Texture("player_isSkidding"),
                     AnimationState.FALLING,       new Texture("player_isFalling"),

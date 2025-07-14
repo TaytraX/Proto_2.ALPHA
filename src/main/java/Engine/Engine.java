@@ -24,7 +24,7 @@ public class Engine {
     public Player player;
     private Physics physics;
     private long lastTime = System.currentTimeMillis();
-    private float deltaTime = 0.016f;
+    private float deltaTime = 0.000016f;
 
     List<AABB> horizontalPlatforms = new ArrayList<>(); // Pour les collisions Y
     List<AABB> verticalWalls = new ArrayList<>();
@@ -53,20 +53,23 @@ public class Engine {
                     new Vector2f(0, 0),
                     new Vector2f(0, 0),
                     false,
+                    false,
+                    0.0f,
                     AnimationState.IDLE,
                     true,
                     false,
                     false,
                     false,
+                    20.0f,
                     2.0f,
-                    7.0f,
+                    480.0f,
                     System.currentTimeMillis()
             );
             ThreadManager.playerState.set(initialState);
             GameLogger.info("PlayerState initialisé");
 
             // Plateforme de base
-            horizontalPlatforms.add(new AABB(new Vector2f(0, -2), new Vector2f(5, 0.5f)));
+            horizontalPlatforms.add(new AABB(new Vector2f(0, -10), new Vector2f(49, 0.5f)));
             // Plateforme supplémentaire
             horizontalPlatforms.add(new AABB(new Vector2f(3, 0), new Vector2f(2, 0.5f)));
 

@@ -7,7 +7,6 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -8.00f;
-    public static final float GROUND_FRICTION = 5.0f;
 
     public PlayerState update(PlayerState currentState,  List<AABB> horizontalPlatforms, List<AABB> verticalWalls, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
@@ -18,8 +17,12 @@ public class Physics {
         newPosition.y += newVelocity.y * deltaTime;
 
         AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+        // Avant les corrections de collision
+        float impactVelocity = newVelocity.y;
+        boolean wasGrounded = currentState.isGrounded();
 
         for (AABB platform : horizontalPlatforms) {
+
             if(playerAABB.collidesWith(platform)) {
                 if (newVelocity.y < 0) {
                     // Chute ou stationnaire → atterrissage
@@ -36,13 +39,20 @@ public class Physics {
         }
 
         newPosition.x += newVelocity.x * deltaTime;
+
+        // Décélération exponentielle basée sur la gravité
+        if (isGrounded && !currentState.moveLeft() && !currentState.moveRight()) {
+            float frictionRate = Math.abs(GRAVITY) * 0.15f; // 15% de la gravité
+            newVelocity.x *= Math.max(0, 1.0f - frictionRate * deltaTime);
+        }
+
         for (AABB wall : verticalWalls) {
             if(playerAABB.collidesWith(wall)) {
                 if (newVelocity.x >= 0) {
                     // Collision par le droit
                     newPosition.x = wall.getMaxX() + PlayerState.PLAYER_SIZE.x;
                     newVelocity.x = 0;
-                } else {
+                } else if (newVelocity.x < 0) {
                     // Collision par le gauche
                     newPosition.x = wall.getMinX() - PlayerState.PLAYER_SIZE.x;
                     newVelocity.x = 0;
@@ -55,17 +65,20 @@ public class Physics {
                 newPosition,
                 newVelocity,
                 isGrounded,
+                wasGrounded,
+                impactVelocity,
                 currentState.animationState(),
                 currentState.facingRight(),
                 currentState.moveLeft(),
                 currentState.moveRight(),
                 currentState.jump(),
+                currentState.accelerationSpeed(),
                 currentState.moveSpeed(),
                 currentState.jumpForce(),
                 currentState.timestamp()
         );
     }
-
+/*
     public PlayerState update(PlayerState currentState, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
@@ -88,5 +101,5 @@ public class Physics {
                 currentState.jumpForce(),
                 currentState.timestamp()
         );
-    }
+    }*/
 }
