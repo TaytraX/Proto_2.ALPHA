@@ -13,7 +13,14 @@ public class Physics {
         Vector2f newPosition = new Vector2f(currentState.position());
         boolean isGrounded = false;
 
+        // Calcul de la vitesse max basée uniquement sur la gravité
+        float maxSpeed = (float) Math.sqrt(Math.abs(GRAVITY) * 3.0f);
+
+        // Appliquer la gravité
         newVelocity.y += GRAVITY * deltaTime;
+
+        // Limiter la vitesse horizontale
+        newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
         newPosition.y += newVelocity.y * deltaTime;
 
         AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
@@ -42,7 +49,7 @@ public class Physics {
 
         // Décélération exponentielle basée sur la gravité
         if (isGrounded && !currentState.moveLeft() && !currentState.moveRight()) {
-            float frictionRate = Math.abs(GRAVITY) * 0.15f; // 15% de la gravité
+            float frictionRate = Math.abs(GRAVITY) * 0.30f; // 30% de la gravité
             newVelocity.x *= Math.max(0, 1.0f - frictionRate * deltaTime);
         }
 
