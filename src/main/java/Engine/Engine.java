@@ -70,7 +70,7 @@ public class Engine {
             GameLogger.info("PlayerState initialisé");
 
             // Plateforme de base
-            horizontalPlatforms.add(new AABB(new Vector2f(0, -10), new Vector2f(49, 0.5f)));
+            horizontalPlatforms.add(new AABB(new Vector2f(0, -1), new Vector2f(49, 0.5f)));
             // Plateforme supplémentaire
             horizontalPlatforms.add(new AABB(new Vector2f(3, 0), new Vector2f(2, 0.5f)));
 

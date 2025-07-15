@@ -15,6 +15,10 @@ public class Camera {
     private float followSpeed = 2.0f;        // Vitesse de suivi
     private Vector2f offset = new Vector2f(0, 1.0f); // Décalage (joueur un peu en bas)
     private Vector2f deadZone = new Vector2f(2.0f, 1.5f); // Zone morte
+    private float currentFOV = 1.0f;
+    private float minFOV = 0.5f;      // Zoom in maximum
+    private float maxFOV = 3.0f;      // Zoom out maximum
+    private float fovStep = 0.1f;
 
     public Camera() {
         Vector2f FOV = new Vector2f((Main.getWidth() / 16f), (Main.getHeight() / 16f));
@@ -67,6 +71,30 @@ public class Camera {
         );
     }
 
+    public Matrix4f getProjectionMatrix() {
+        DisplayManager display = Main.getWindow().getDisplayManager();
+        float worldWidth = display.getWorldWidth() * currentFOV;
+        float worldHeight = display.getWorldHeight() * currentFOV;
+
+        return projectionMatrix.identity().ortho(
+                -worldWidth/2, worldWidth/2,
+                -worldHeight/2, worldHeight/2,
+                0, 1
+        );
+    }
+
+    public void increaseFOV() {
+        currentFOV = Math.min(currentFOV + fovStep, maxFOV);
+    }
+
+    public void decreaseFOV() {
+        currentFOV = Math.max(currentFOV - fovStep, minFOV);
+    }
+
+    public void resetFOV() {
+        currentFOV = 1.0f;
+    }
+
     // ✅ Configuration publique
     public void setFollowSpeed(float speed) {
         this.followSpeed = speed;
@@ -78,18 +106,6 @@ public class Camera {
 
     public void setDeadZone(float x, float y) {
         this.deadZone.set(x, y);
-    }
-
-    public Matrix4f getProjectionMatrix() {
-        DisplayManager display = Main.getWindow().getDisplayManager();
-        float worldWidth = display.getWorldWidth();
-        float worldHeight = display.getWorldHeight();
-
-        return projectionMatrix.identity().ortho(
-                -worldWidth/2, worldWidth/2,
-                -worldHeight/2, worldHeight/2,
-                0, 1
-        );
     }
 
     public Matrix4f getViewMatrix() {
