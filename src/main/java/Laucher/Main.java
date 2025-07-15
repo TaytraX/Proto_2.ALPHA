@@ -23,6 +23,10 @@ public class Main {
         }
     }
 
+    public static Engine getEngine() {
+        return engine;
+    }
+
     public static Window getWindow() {
         return window;
     }

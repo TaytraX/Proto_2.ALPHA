@@ -5,6 +5,7 @@ import Entity.Camera;
 import Entity.Player;
 import Entity.PlayerState;
 import Laucher.Main;
+import Render.DisplayManager;
 import Render.Window;
 import org.joml.Vector2f;
 
@@ -81,6 +82,9 @@ public class Engine {
             }
 
             window.init();
+            DisplayManager display = window.getDisplayManager();
+            display.setScaleMode(DisplayManager.ScaleMode.LETTERBOX); // ou autre mode
+
             Renderer = new Renderer();
             Renderer.initialize();
             camera = new Camera();
@@ -131,7 +135,16 @@ public class Engine {
         ThreadManager.playerState.set(afterPhysics);
     }
 
-    private void resetPlayerState() {
+    // Optionnel : méthode pour changer le mode en jeu
+    public void toggleScaleMode() {
+        DisplayManager display = window.getDisplayManager();
+        DisplayManager.ScaleMode current = display.getScaleMode();
+
+        switch (current) {
+            case LETTERBOX -> display.setScaleMode(DisplayManager.ScaleMode.STRETCH);
+            case STRETCH -> display.setScaleMode(DisplayManager.ScaleMode.INTEGER);
+            case INTEGER -> display.setScaleMode(DisplayManager.ScaleMode.LETTERBOX);
+        }
     }
 
     public void cleanup() {

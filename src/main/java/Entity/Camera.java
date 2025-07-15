@@ -2,6 +2,7 @@ package Entity;
 
 import Engine.ThreadManager;
 import Laucher.Main;
+import Render.DisplayManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -79,10 +80,11 @@ public class Camera {
         this.deadZone.set(x, y);
     }
 
-    // Reste du code inchangé..
     public Matrix4f getProjectionMatrix() {
-        float worldWidth = 40.0f;
-        float worldHeight = 25.0f;
+        DisplayManager display = Main.getWindow().getDisplayManager();
+        float worldWidth = display.getWorldWidth();
+        float worldHeight = display.getWorldHeight();
+
         return projectionMatrix.identity().ortho(
                 -worldWidth/2, worldWidth/2,
                 -worldHeight/2, worldHeight/2,

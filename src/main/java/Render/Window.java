@@ -1,5 +1,7 @@
 package Render;
 
+import Laucher.Main;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryUtil;
@@ -16,6 +18,7 @@ public class Window {
     private int width, height;
     private long window;
     private final boolean vSync;
+    private DisplayManager displayManager;
 
     private boolean isFullscreen = false;
     private int windowedWidth, windowedHeight;
@@ -63,6 +66,9 @@ public class Window {
         // MAINTENANT on peut créer les capacités OpenGL
         createCapabilities();
 
+        displayManager = new DisplayManager();
+        displayManager.updateDisplay(width, height);
+
         // Vérification que OpenGL fonctionne
         if (glGetString(GL_VERSION) == null) {
             throw new RuntimeException("Failed to initialize OpenGL context");
@@ -72,6 +78,7 @@ public class Window {
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             this.width = width;
             this.height = height;
+            displayManager.updateDisplay(width, height);
         });
 
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
@@ -79,9 +86,10 @@ public class Window {
                 glfwSetWindowShouldClose(window, true);
             if(key == GLFW_KEY_F11 && action == GLFW_RELEASE)
                 toggleFullscreen();
+            if(key == GLFW_KEY_F12 && action == GLFW_RELEASE)
+                Main.getEngine().toggleScaleMode(); // Changer le mode de scaling
         });
 
-        // Reste du code...
         if(maximised){
             glfwMaximizeWindow(window);
         } else {
@@ -140,6 +148,7 @@ public class Window {
     }
 
     public void clear(){
+        displayManager.clearBorders();
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
@@ -160,4 +169,7 @@ public class Window {
         return window; // La variable long window de ta classe
     }
 
+    public DisplayManager getDisplayManager() {
+        return displayManager;
+    }
 }
