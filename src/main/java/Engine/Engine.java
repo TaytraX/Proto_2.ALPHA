@@ -152,4 +152,8 @@ public class Engine {
         window.cleanup();
         glfwTerminate();
     }
+
+    public List<AABB> getHorizontalPlatforms() { return horizontalPlatforms; }
+
+    public List<AABB> getVerticalWalls() { return verticalWalls; }
 }
