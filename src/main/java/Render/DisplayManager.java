@@ -7,8 +7,8 @@ public class DisplayManager {
     private int windowWidth, windowHeight;
     private int renderWidth, renderHeight;
     private float aspectRatio;
-    private Vector2f renderOffset = new Vector2f(0, 0);
-    private Vector2f renderScale = new Vector2f(1, 1);
+    private final Vector2f renderOffset = new Vector2f(0, 0);
+    private final Vector2f renderScale = new Vector2f(1, 1);
 
     // Résolution de référence pour ton jeu
     private static final int TARGET_WIDTH = 1280;

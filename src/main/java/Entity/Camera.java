@@ -7,21 +7,18 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 public class Camera {
-    private Vector2f position;
+    private final Vector2f position;
     private final Matrix4f projectionMatrix = new Matrix4f();
     private final Matrix4f viewMatrix = new Matrix4f();
 
     // ✅ Paramètres de suivi
     private float followSpeed = 2.0f;        // Vitesse de suivi
-    private Vector2f offset = new Vector2f(0, 1.0f); // Décalage (joueur un peu en bas)
-    private Vector2f deadZone = new Vector2f(2.0f, 1.5f); // Zone morte
-    private float currentFOV = 1.0f;
-    private float minFOV = 0.5f;      // Zoom in maximum
-    private float maxFOV = 3.0f;      // Zoom out maximum
-    private float fovStep = 0.1f;
+    private final Vector2f offset = new Vector2f(0, 1.0f); // Décalage (joueur un peu en bas)
+    private final Vector2f deadZone = new Vector2f(2.0f, 1.5f); // Zone morte
+    private float currentFOV = 1.5f;
+    private final float fovStep = 0.2f;
 
     public Camera() {
-        Vector2f FOV = new Vector2f((Main.getWidth() / 16f), (Main.getHeight() / 16f));
         position = new Vector2f(0, 0);
     }
 
@@ -84,10 +81,14 @@ public class Camera {
     }
 
     public void increaseFOV() {
+        // Zoom out maximum
+        float maxFOV = 5.0f;
         currentFOV = Math.min(currentFOV + fovStep, maxFOV);
     }
 
     public void decreaseFOV() {
+        // Zoom in maximum
+        float minFOV = 0.2f;
         currentFOV = Math.max(currentFOV - fovStep, minFOV);
     }
 
