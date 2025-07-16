@@ -50,7 +50,7 @@ public class GroundRenderer implements Renderable {
                 -0.5f, -0.5f,  // Bas gauche
                 -0.5f,  0.5f,  // Haut gauche
                 0.5f,  0.5f,  // Haut droit
-                0.5f, -0.1f   // Bas droit
+                0.5f, -0.5f   // Bas droit
         };
 
         FloatBuffer vertexBuffer = org.lwjgl.BufferUtils.createFloatBuffer(vertices.length);

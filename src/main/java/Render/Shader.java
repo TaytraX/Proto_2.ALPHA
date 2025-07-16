@@ -38,6 +38,10 @@ public class Shader {
             createUniform("viewMatrix");
             createUniform("projectionMatrix");
             createUniform("textureSample");
+        }else if (shaderName.equals("platforms")) {
+            createUniform("transformationMatrix");
+            createUniform("viewMatrix");
+            createUniform("projectionMatrix");
         }
     }
 
