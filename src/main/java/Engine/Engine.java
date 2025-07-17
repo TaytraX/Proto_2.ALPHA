@@ -129,7 +129,7 @@ public class Engine {
         // 2. Traiter les inputs et mouvements
         PlayerState afterInputs  = player.update(currentState, deltaTime);
         // 2. Physics applique velocity à position
-        PlayerState afterPhysics = physics.update(afterInputs,horizontalPlatforms, verticalWalls, deltaTime);
+        PlayerState afterPhysics = physics.update(afterInputs,horizontalPlatforms, deltaTime);
 
         // 4. Sauvegarder le nouvel état
         ThreadManager.playerState.set(afterPhysics);

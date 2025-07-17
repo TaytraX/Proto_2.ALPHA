@@ -8,7 +8,7 @@ import java.util.List;
 public class Physics {
     public static final float GRAVITY = -8.00f;
 
-    public PlayerState update(PlayerState currentState,  List<AABB> horizontalPlatforms, List<AABB> verticalWalls, float deltaTime) {
+    public PlayerState update(PlayerState currentState,  List<AABB> horizontalPlatforms, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
         boolean isGrounded = false;
@@ -18,6 +18,8 @@ public class Physics {
 
         // Appliquer la gravité
         newVelocity.y += GRAVITY * deltaTime;
+
+        newPosition.x += newVelocity.x * deltaTime;
 
         // Limiter la vitesse horizontale
         newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
@@ -33,39 +35,33 @@ public class Physics {
             if(playerAABB.collidesWith(platform)) {
                 if (newVelocity.y < 0) {
                     // Chute ou stationnaire → atterrissage
-                    newPosition.y = platform.getMaxY() + PlayerState.PLAYER_SIZE.y;
                     newVelocity.y = 0;
+                    newPosition.y = platform.getMaxY() + PlayerState.PLAYER_SIZE.y;
                     isGrounded = true;
                 } else {
                     // Collision par le haut (coup de tête)
-                    newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
                     newVelocity.y = 0;
+                    newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
                 }
-                break;// une collision à la fois.
+            }
+
+            if(playerAABB.collidesWith(platform)) {
+                if (newVelocity.x >= 0) {
+                    // Collision par le droit
+                    newVelocity.x = 0;
+                    newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
+                } else if (newVelocity.x < 0) {
+                    // Collision par le gauche
+                    newVelocity.x = 0;
+                    newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
+                }
             }
         }
-
-        newPosition.x += newVelocity.x * deltaTime;
 
         // Décélération exponentielle basée sur la gravité
         if (isGrounded && !currentState.moveLeft() && !currentState.moveRight()) {
             float frictionRate = Math.abs(GRAVITY) * 0.30f; // 30% de la gravité
             newVelocity.x *= Math.max(0, 1.0f - frictionRate * deltaTime);
-        }
-
-        for (AABB wall : verticalWalls) {
-            if(playerAABB.collidesWith(wall)) {
-                if (newVelocity.x >= 0) {
-                    // Collision par le droit
-                    newPosition.x = wall.getMaxX() + PlayerState.PLAYER_SIZE.x;
-                    newVelocity.x = 0;
-                } else if (newVelocity.x < 0) {
-                    // Collision par le gauche
-                    newPosition.x = wall.getMinX() - PlayerState.PLAYER_SIZE.x;
-                    newVelocity.x = 0;
-                }
-                break;// une collision à la fois.
-            }
         }
 
         return new PlayerState(
