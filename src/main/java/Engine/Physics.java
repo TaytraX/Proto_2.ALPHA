@@ -8,7 +8,7 @@ import java.util.List;
 public class Physics {
     public static final float GRAVITY = -8.00f;
 
-    public PlayerState update(PlayerState currentState,  List<AABB> horizontalPlatforms, float deltaTime) {
+    public PlayerState update(PlayerState currentState,  List<AABB> platforms, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
         Vector2f newPosition = new Vector2f(currentState.position());
         boolean isGrounded = false;
@@ -23,37 +23,52 @@ public class Physics {
 
         // Limiter la vitesse horizontale
         newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
-        newPosition.y += newVelocity.y * deltaTime;
 
         AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
         // Avant les corrections de collision
         float impactVelocity = newVelocity.y;
         boolean wasGrounded = currentState.isGrounded();
 
-        for (AABB platform : horizontalPlatforms) {
-
+        // 1. ÉTAPE X : Traiter toutes les plateformes pour X
+        for (AABB platform : platforms) {
             if(playerAABB.collidesWith(platform)) {
-                if (newVelocity.y < 0) {
-                    // Chute ou stationnaire → atterrissage
-                    newVelocity.y = 0;
-                    newPosition.y = platform.getMaxY() + PlayerState.PLAYER_SIZE.y;
-                    isGrounded = true;
-                } else {
-                    // Collision par le haut (coup de tête)
-                    newVelocity.y = 0;
-                    newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
+                float overlapX = playerAABB.getOverlapX(platform);
+                float overlapY = playerAABB.getOverlapY(platform);
+                float tolerance = 0.01f;
+
+                if (overlapX < overlapY - tolerance) {
+                    // Traiter collision horizontale
+                    if (newVelocity.x > 0) {
+                        newVelocity.x = 0;
+                        newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
+                    } else if (newVelocity.x < 0) {
+                        newVelocity.x = 0;
+                        newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
+                    }
                 }
             }
+        }
 
+        // 2. ÉTAPE Y : Appliquer le mouvement Y puis tester toutes les plateformes
+        newPosition.y += newVelocity.y * deltaTime;
+        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+
+        for (AABB platform : platforms) {
             if(playerAABB.collidesWith(platform)) {
-                if (newVelocity.x >= 0) {
-                    // Collision par le droit
-                    newVelocity.x = 0;
-                    newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
-                } else if (newVelocity.x < 0) {
-                    // Collision par le gauche
-                    newVelocity.x = 0;
-                    newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
+                float overlapX = playerAABB.getOverlapX(platform);
+                float overlapY = playerAABB.getOverlapY(platform);
+                float tolerance = 0.01f;
+
+                if (overlapY < overlapX - tolerance) {
+                    // Traiter collision verticale
+                    if (newVelocity.y < 0) {
+                        newVelocity.y = 0;
+                        newPosition.y = platform.getMaxY() + PlayerState.PLAYER_SIZE.y;
+                        isGrounded = true; // ✅ MAINTENANT ça marche !
+                    } else if (newVelocity.y > 0) {
+                        newVelocity.y = 0;
+                        newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
+                    }
                 }
             }
         }
@@ -81,28 +96,4 @@ public class Physics {
                 currentState.timestamp()
         );
     }
-/*
-    public PlayerState update(PlayerState currentState, float deltaTime) {
-        Vector2f newVelocity = new Vector2f(currentState.velocity());
-        Vector2f newPosition = new Vector2f(currentState.position());
-        boolean isGrounded = false;
-
-        // Appliquer la vélocité à la position
-        newPosition.x += newVelocity.x * deltaTime;
-        newPosition.y += newVelocity.y * deltaTime;
-
-        return new PlayerState(
-                newPosition,
-                newVelocity,
-                isGrounded,
-                currentState.animationState(),
-                currentState.facingRight(),
-                currentState.moveLeft(),
-                currentState.moveRight(),
-                currentState.jump(),
-                currentState.moveSpeed(),
-                currentState.jumpForce(),
-                currentState.timestamp()
-        );
-    }*/
 }

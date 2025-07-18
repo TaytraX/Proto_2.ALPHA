@@ -20,15 +20,13 @@ public class Engine {
     public Window window;
     public boolean isRunning;
     public Renderer Renderer;
-    public PlayerState playerState;
     public Camera camera;
     public Player player;
     private Physics physics;
     private long lastTime = System.currentTimeMillis();
     private float deltaTime = 0.000016f;
 
-    List<AABB> horizontalPlatforms = new ArrayList<>(); // Pour les collisions Y
-    List<AABB> verticalWalls = new ArrayList<>();
+    List<AABB> platforms = new ArrayList<>();
     Map<Integer, List<AABB>> grounds = new HashMap<>();
 
     public void start() {
@@ -70,9 +68,9 @@ public class Engine {
             GameLogger.info("PlayerState initialisé");
 
             // Plateforme de base
-            horizontalPlatforms.add(new AABB(new Vector2f(0, -4), new Vector2f(49, 0.5f)));
+            platforms.add(new AABB(new Vector2f(0, -3), new Vector2f(49, 0.5f)));
             // Plateforme supplémentaire
-            horizontalPlatforms.add(new AABB(new Vector2f(3, 0), new Vector2f(2, 0.5f)));
+            platforms.add(new AABB(new Vector2f(3, 0), new Vector2f(2, 0.5f)));
 
             // Vérification que l'état est bien défini
             PlayerState test = ThreadManager.playerState.get();
@@ -129,7 +127,7 @@ public class Engine {
         // 2. Traiter les inputs et mouvements
         PlayerState afterInputs  = player.update(currentState, deltaTime);
         // 2. Physics applique velocity à position
-        PlayerState afterPhysics = physics.update(afterInputs,horizontalPlatforms, deltaTime);
+        PlayerState afterPhysics = physics.update(afterInputs,platforms, deltaTime);
 
         // 4. Sauvegarder le nouvel état
         ThreadManager.playerState.set(afterPhysics);
@@ -153,7 +151,5 @@ public class Engine {
         glfwTerminate();
     }
 
-    public List<AABB> getHorizontalPlatforms() { return horizontalPlatforms; }
-
-    public List<AABB> getVerticalWalls() { return verticalWalls; }
+    public List<AABB> getPlatforms() { return platforms; }
 }
