@@ -1,4 +1,8 @@
 package Engine.World;
 
-public class GroundGenRequest {
+public record GroundGenRequest(int chunkX, long seed) {
+
+    public static GroundGenRequest forChunk(int chunkX) {
+        return new GroundGenRequest(chunkX, System.currentTimeMillis());
+    }
 }

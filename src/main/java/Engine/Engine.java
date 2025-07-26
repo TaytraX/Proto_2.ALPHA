@@ -1,5 +1,6 @@
 package Engine;
 
+import Engine.World.GeneratedGround;
 import Entity.AnimationState;
 import Entity.Camera;
 import Entity.Player;
@@ -11,7 +12,11 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
+import static Engine.World.GeneratedGround.CHUNK_WIDTH;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 public class Engine {
@@ -23,6 +28,8 @@ public class Engine {
     private Physics physics;
     private long lastTime = System.currentTimeMillis();
     private float deltaTime = 0.000016f;
+    private Map<Integer, List<AABB>> worldChunks = new ConcurrentHashMap<>();
+    private Random seed = new Random();
 
     List<AABB> platforms = new ArrayList<>();
 
@@ -64,10 +71,7 @@ public class Engine {
             ThreadManager.playerState.set(initialState);
             GameLogger.info("PlayerState initialisé");
 
-            // Plateforme de base
-            platforms.add(new AABB(new Vector2f(0, -3), new Vector2f(49, 0.5f)));
-            // Plateforme supplémentaire
-            platforms.add(new AABB(new Vector2f(3, 0), new Vector2f(2, 0.5f)));
+            generateInitialWorld();
 
             // Vérification que l'état est bien défini
             PlayerState test = ThreadManager.playerState.get();
@@ -92,6 +96,60 @@ public class Engine {
             GameLogger.error("Échec d'initialisation du moteur", e);
             System.exit(1); // Arrêt propre au lieu de crash
         }
+    }
+
+    private void generateInitialWorld() {
+        // Générer 5 chunks autour du spawn (x=0)
+        for (int chunkX = -2; chunkX <= 2; chunkX++) {
+            loadChunk(chunkX);
+        }
+        GameLogger.info("Monde initial généré : " + getTotalBlockCount() + " blocs");
+    }
+
+    public void loadChunk(int chunkX) {
+        if (!worldChunks.containsKey(chunkX)) {
+            GeneratedGround chunk = new GeneratedGround(seed.nextLong(), chunkX);
+            worldChunks.put(chunkX, chunk.getPlatforms());
+            GameLogger.debug("Chunk " + chunkX + " chargé (" + chunk.getPlatforms().size() + " blocs)");
+        }
+    }
+
+    public void unloadChunk(int chunkX) {
+        if (worldChunks.remove(chunkX) != null) {
+            GameLogger.debug("Chunk " + chunkX + " déchargé");
+        }
+    }
+
+    // Méthode pour obtenir toutes les plateformes actives (pour la physique)
+    public List<AABB> getActivePlatforms() {
+        List<AABB> allPlatforms = new ArrayList<>();
+        for (List<AABB> chunkPlatforms : worldChunks.values()) {
+            allPlatforms.addAll(chunkPlatforms);
+        }
+        return allPlatforms;
+    }
+
+    // Décharger les chunks lointains pour économiser la mémoire
+    public void manageChunks() {
+        PlayerState playerState = ThreadManager.playerState.get();
+        if (playerState == null) return;
+
+        int playerChunkX = (int)(playerState.position().x / CHUNK_WIDTH);
+
+        worldChunks.entrySet().removeIf(entry -> {
+            int chunkX = entry.getKey();
+            boolean shouldUnload = Math.abs(chunkX - playerChunkX) > 3; // Garder 3 chunks de rayon
+            if (shouldUnload) {
+                GameLogger.debug("Déchargement chunk distant : " + chunkX);
+            }
+            return shouldUnload;
+        });
+    }
+
+    private int getTotalBlockCount() {
+        return worldChunks.values().stream()
+                .mapToInt(List::size)
+                .sum();
     }
 
     public void render() {
@@ -140,6 +198,37 @@ public class Engine {
             case STRETCH -> display.setScaleMode(DisplayManager.ScaleMode.INTEGER);
             case INTEGER -> display.setScaleMode(DisplayManager.ScaleMode.LETTERBOX);
         }
+    }
+
+    public void loadChunks(int chunkX) {
+        if (!worldChunks.containsKey(chunkX)) {
+            GeneratedGround chunk = new GeneratedGround(seed.nextLong(), chunkX);
+            worldChunks.put(chunkX, chunk.getPlatforms());
+            GameLogger.info("Chunk " + chunkX + " chargé");
+        }
+    }
+
+    public int getChunkX(float worldX) {
+        return (int) Math.floor(worldX / CHUNK_WIDTH);
+    }
+
+    public List<AABB> getPlatformsNearPlayer() {
+        PlayerState state = ThreadManager.playerState.get();
+
+        if (state == null) return new ArrayList<>();
+
+        int playerChunkX = getChunkX(state.position().x);
+        List<AABB> nearbyPlatforms = new ArrayList<>();
+
+        for (int chunkX = playerChunkX - 4; chunkX <= playerChunkX + 4; chunkX++) {
+            loadChunks(chunkX);
+
+            List<AABB> chunkPlatforms = worldChunks.get(chunkX);
+            if (chunkPlatforms != null) {
+                nearbyPlatforms.addAll(chunkPlatforms);
+            }
+        }
+        return nearbyPlatforms;
     }
 
     public void cleanup() {
