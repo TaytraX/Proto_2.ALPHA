@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -8.00f;
-    public final float GROUND_FRICTION = 1.0f;
+    private static final float AIR_ACCELERATION_FACTOR = 0.5f;
 
     public PlayerState update(PlayerState currentState,  List<AABB> platforms, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
@@ -20,13 +20,12 @@ public class Physics {
         // Appliquer la gravité
         newVelocity.y += GRAVITY * deltaTime;
 
-        newPosition.x += (newVelocity.x * GROUND_FRICTION) * deltaTime;
-
+        newPosition.x += newVelocity.x * deltaTime;
         // Limiter la vitesse horizontale
         newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
 
         AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-        // Avant les corrections de collision
+
         float impactVelocity = newVelocity.y;
         boolean wasGrounded = currentState.isGrounded();
 
@@ -65,7 +64,7 @@ public class Physics {
                     if (newVelocity.y < 0) {
                         newVelocity.y = 0;
                         newPosition.y = platform.getMaxY() + PlayerState.PLAYER_SIZE.y;
-                        isGrounded = true; // ✅ MAINTENANT ça marche !
+                        isGrounded = true;
                     } else if (newVelocity.y > 0) {
                         newVelocity.y = 0;
                         newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;

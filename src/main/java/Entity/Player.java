@@ -20,13 +20,20 @@ public class Player {
         boolean jumpPressed = glfwGetKey(windowId, GLFW_KEY_SPACE) == GLFW_PRESS ||
                                glfwGetKey(windowId, GLFW_KEY_W) == GLFW_PRESS;
 
-        boolean moveLeft = leftPressed && !rightPressed;
-        boolean moveRight = rightPressed && !leftPressed;
+        // Déterminez les mouvements en fonction de l'état au sol
+        boolean moveLeft = leftPressed && !rightPressed && state.isGrounded();
+        boolean moveRight = rightPressed && !leftPressed && state.isGrounded();
+
+        // Si le joueur n'est pas au sol, conservez la direction actuelle
+        if (!state.isGrounded()) {
+            moveLeft = state.moveLeft();
+            moveRight = state.moveRight();
+        }
+
         boolean jump = jumpPressed && state.isGrounded();
 
         // 3. Appliquer les mouvements
         Vector2f newVelocity = applyMovement(state, moveLeft, moveRight, jump, deltaTime);
-
         boolean facingRight = moveRight || (!moveLeft && state.facingRight());
 
         // Retourner le state avec les actions déterminées
