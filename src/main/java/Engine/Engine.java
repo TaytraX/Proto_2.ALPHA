@@ -29,9 +29,8 @@ public class Engine {
     private long lastTime = System.currentTimeMillis();
     private float deltaTime = 0.000016f;
     private Map<Integer, List<AABB>> worldChunks = new ConcurrentHashMap<>();
-    private Random seed = new Random();
-
-    List<AABB> platforms = new ArrayList<>();
+    Random random = new Random();
+    private final long seed = random.nextLong();
 
     public void start() {
         init();
@@ -53,7 +52,7 @@ public class Engine {
 
             // Initialiser un PlayerState de base
             PlayerState initialState = new PlayerState(
-                    new Vector2f(0, 0),
+                    new Vector2f(0, 30),
                     new Vector2f(0, 0),
                     false,
                     false,
@@ -101,17 +100,9 @@ public class Engine {
     private void generateInitialWorld() {
         // Générer 5 chunks autour du spawn (x=0)
         for (int chunkX = -2; chunkX <= 2; chunkX++) {
-            loadChunk(chunkX);
+            loadChunks(chunkX);
         }
         GameLogger.info("Monde initial généré : " + getTotalBlockCount() + " blocs");
-    }
-
-    public void loadChunk(int chunkX) {
-        if (!worldChunks.containsKey(chunkX)) {
-            GeneratedGround chunk = new GeneratedGround(seed.nextLong(), chunkX);
-            worldChunks.put(chunkX, chunk.getPlatforms());
-            GameLogger.debug("Chunk " + chunkX + " chargé (" + chunk.getPlatforms().size() + " blocs)");
-        }
     }
 
     public void unloadChunk(int chunkX) {
@@ -136,14 +127,18 @@ public class Engine {
 
         int playerChunkX = (int)(playerState.position().x / CHUNK_WIDTH);
 
-        worldChunks.entrySet().removeIf(entry -> {
-            int chunkX = entry.getKey();
-            boolean shouldUnload = Math.abs(chunkX - playerChunkX) > 3; // Garder 3 chunks de rayon
-            if (shouldUnload) {
-                GameLogger.debug("Déchargement chunk distant : " + chunkX);
+        // ✅ Utilise unloadChunk() au lieu de removeIf
+        List<Integer> chunksToUnload = new ArrayList<>();
+
+        for (Integer chunkX : worldChunks.keySet()) {
+            if (Math.abs(chunkX - playerChunkX) > 3) {
+                chunksToUnload.add(chunkX);
             }
-            return shouldUnload;
-        });
+        }
+
+        for (Integer chunkX : chunksToUnload) {
+            unloadChunk(chunkX);
+        }
     }
 
     private int getTotalBlockCount() {
@@ -181,11 +176,15 @@ public class Engine {
 
         // 2. Traiter les inputs et mouvements
         PlayerState afterInputs  = player.update(currentState, deltaTime);
+
+        camera.followPlayer(deltaTime);
         // 2. Physics applique velocity à position
-        PlayerState afterPhysics = physics.update(afterInputs,platforms, deltaTime);
+        PlayerState afterPhysics = physics.update(afterInputs, getPlatformsNearPlayer(), deltaTime);
 
         // 4. Sauvegarder le nouvel état
         ThreadManager.playerState.set(afterPhysics);
+
+        manageChunks();
     }
 
     // Optionnel : méthode pour changer le mode en jeu
@@ -202,7 +201,7 @@ public class Engine {
 
     public void loadChunks(int chunkX) {
         if (!worldChunks.containsKey(chunkX)) {
-            GeneratedGround chunk = new GeneratedGround(seed.nextLong(), chunkX);
+            GeneratedGround chunk = new GeneratedGround(seed, chunkX);
             worldChunks.put(chunkX, chunk.getPlatforms());
             GameLogger.info("Chunk " + chunkX + " chargé");
         }
@@ -220,7 +219,7 @@ public class Engine {
         int playerChunkX = getChunkX(state.position().x);
         List<AABB> nearbyPlatforms = new ArrayList<>();
 
-        for (int chunkX = playerChunkX - 4; chunkX <= playerChunkX + 4; chunkX++) {
+        for (int chunkX = playerChunkX - 2; chunkX <= playerChunkX + 2; chunkX++) {
             loadChunks(chunkX);
 
             List<AABB> chunkPlatforms = worldChunks.get(chunkX);
@@ -236,6 +235,4 @@ public class Engine {
         window.cleanup();
         glfwTerminate();
     }
-
-    public List<AABB> getPlatforms() { return platforms; }
 }

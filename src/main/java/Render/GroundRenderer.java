@@ -72,7 +72,7 @@ public class GroundRenderer implements Renderable {
     @Override
     public void render(Camera camera, float deltaTime) {
         try {
-            List<AABB> platforms = Main.getEngine().getPlatforms();
+            List<AABB> allPlatforms = Main.getEngine().getActivePlatforms();
 
             shader.use();
 
@@ -87,7 +87,7 @@ public class GroundRenderer implements Renderable {
 
             glBindVertexArray(VAO);
 
-            for (AABB platform : platforms) {
+            for (AABB platform : allPlatforms) {
                 // Transformation: Position + Scale
                 transformationMatrix.identity()
                         .translation(platform.position().x, platform.position().y, 0.0f)

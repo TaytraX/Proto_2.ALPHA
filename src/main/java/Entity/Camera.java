@@ -15,7 +15,7 @@ public class Camera {
     private float followSpeed = 2.0f;        // Vitesse de suivi
     private final Vector2f offset = new Vector2f(0, 1.0f); // Décalage (joueur un peu en bas)
     private final Vector2f deadZone = new Vector2f(2.0f, 1.5f); // Zone morte
-    private float currentFOV = 1.5f;
+    private float currentFOV = 3.0f;
     private final float fovStep = 0.2f;
 
     public Camera() {
