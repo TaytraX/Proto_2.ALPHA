@@ -7,19 +7,30 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ThreadManager {
+    // États partagés thread-safe
+    public static final AtomicReference<PlayerState> playerState = new AtomicReference<>();
 
-    public static final AtomicReference<PlayerState> playerState  = new AtomicReference<>();
+    // Communication entre threads
+    private static final BlockingQueue<GroundGenRequest> chunkRequests = new LinkedBlockingQueue<>();
+    private static final BlockingQueue<GeneratedGround> completedChunks = new LinkedBlockingQueue<>();
 
-    public static final BlockingDeque<GroundGenRequest> platformGenQueue = new LinkedBlockingDeque<>();
-    public static final BlockingDeque<GeneratedGround> GENERATED_PLATFORMS = new LinkedBlockingDeque<>();
+    // Thread pool configuré
+    private static final ExecutorService worldGenExecutor = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "WorldGen-Thread");
+        t.setDaemon(true); // Meurt avec le programme
+        return t;
+    });
 
-    public ExecutorService platformGenerationExecutor;
+    public static void requestChunk(int chunkX, long seed) {
+        chunkRequests.offer(new GroundGenRequest(chunkX, seed));
+    }
 
-    public ThreadManager() {
+    public static GeneratedGround pollCompletedChunk() {
+        return completedChunks.poll(); // Non-blocking
+    }
 
-        platformGenerationExecutor = Executors.newSingleThreadExecutor(r -> {
-            Thread thread = new Thread(r);
-            return thread;
-        });
+    // Démarrer le worker thread
+    public static void startWorldGeneration() {
+        worldGenExecutor.submit(new GroundGenRequest());
     }
 }
