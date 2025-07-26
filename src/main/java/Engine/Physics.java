@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -8.00f;
+    public final float GROUND_FRICTION = 1.0f;
 
     public PlayerState update(PlayerState currentState,  List<AABB> platforms, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
@@ -19,7 +20,7 @@ public class Physics {
         // Appliquer la gravité
         newVelocity.y += GRAVITY * deltaTime;
 
-        newPosition.x += newVelocity.x * deltaTime;
+        newPosition.x += (newVelocity.x * GROUND_FRICTION) * deltaTime;
 
         // Limiter la vitesse horizontale
         newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));

@@ -9,7 +9,7 @@ public class GeneratedGround {
 
     public GeneratedGround() {
         seed = new Random();
-        noise = new Noise(seed.nextInt());
+        noise = new Noise(seed.nextLong());
     }
 
     public void init() {

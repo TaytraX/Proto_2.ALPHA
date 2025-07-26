@@ -27,7 +27,6 @@ public class Engine {
     private float deltaTime = 0.000016f;
 
     List<AABB> platforms = new ArrayList<>();
-    Map<Integer, List<AABB>> grounds = new HashMap<>();
 
     public void start() {
         init();
