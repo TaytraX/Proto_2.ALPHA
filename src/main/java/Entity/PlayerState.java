@@ -14,9 +14,7 @@ public record PlayerState(
         boolean moveLeft,
         boolean moveRight,
         boolean jump,
-        float accelerationSpeed,
-        float moveSpeed,         // ✅ AJOUTÉ (optionnel)
-        float jumpForce,
+        float force,
         long timestamp
 ) {
     public static final Vector2f PLAYER_SIZE = new Vector2f(0.4f, 0.6f);

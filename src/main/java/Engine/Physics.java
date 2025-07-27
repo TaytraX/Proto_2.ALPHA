@@ -48,7 +48,6 @@ public class Physics {
             float frictionRate = Math.abs(GRAVITY) * 0.30f; // 30% de la gravité
             newVelocity.x *= Math.max(0, 1.0f - frictionRate * deltaTime);
         }
-        float currentVelocity = currentState.velocity().x;
 
         newPosition.x += newVelocity.x * deltaTime;
 
@@ -56,9 +55,8 @@ public class Physics {
 
         float impactVelocity = newVelocity.y;
         boolean wasGrounded = currentState.isGrounded();
-        // Limiter la vitesse horizontale
-        if(isGrounded) newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
-        else newVelocity.x = Math.max(-maxSpeed * 2, Math.min(maxSpeed * 2, currentVelocity));
+
+        newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
 
         // 1. ÉTAPE X : Traiter toutes les plateformes pour X
         for (AABB platform : platforms) {
@@ -91,9 +89,7 @@ public class Physics {
                 currentState.moveLeft(),
                 currentState.moveRight(),
                 currentState.jump(),
-                currentState.accelerationSpeed(),
-                currentState.moveSpeed(),
-                currentState.jumpForce(),
+                currentState.force(),
                 currentState.timestamp()
         );
     }

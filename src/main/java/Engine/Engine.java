@@ -62,9 +62,7 @@ public class Engine {
                     false,
                     false,
                     false,
-                    20.0f,
-                    2.0f,
-                    480.0f,
+                    8.0f,
                     System.currentTimeMillis()
             );
             ThreadManager.playerState.set(initialState);

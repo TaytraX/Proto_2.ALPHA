@@ -42,9 +42,7 @@ public class Player {
                 moveLeft,      // ← Action déterminée
                 moveRight,     // ← Action déterminée
                 jump,
-                state.moveSpeed(), // ← Action déterminée
-                state.moveSpeed(),
-                state.jumpForce(),
+                state.force(),
                 System.currentTimeMillis()
         );
     }
@@ -53,21 +51,18 @@ public class Player {
         Vector2f newVelocity = new Vector2f(state.velocity());
 
         // Constantes d'accélération
-        final float ACCELERATION = state.accelerationSpeed();  // Vitesse d'accélération
-        final float MAX_SPEED = state.moveSpeed();  // Décélération quand pas d'input
+        final float move = state.force();
 
         // Gestion accélération horizontale
         if (moveLeft) {
-            newVelocity.x -= ACCELERATION;
-            newVelocity.x -= MAX_SPEED * deltaTime; // Limite gauche
+            newVelocity.x -= move * deltaTime; // Limite gauche
         } else if (moveRight) {
-            newVelocity.x += ACCELERATION;
-            newVelocity.x += MAX_SPEED * deltaTime;  // Limite droite
+            newVelocity.x += move * deltaTime;  // Limite droite
         }
 
         // Saut inchangé
         if (jump) {
-            newVelocity.y += state.jumpForce() * deltaTime;
+            newVelocity.y += state.force() * deltaTime;
         }
 
         return newVelocity;
