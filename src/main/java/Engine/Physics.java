@@ -7,7 +7,6 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -8.00f;
-    private static final float AIR_ACCELERATION_FACTOR = 0.5f;
 
     public PlayerState update(PlayerState currentState,  List<AABB> platforms, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
@@ -20,38 +19,9 @@ public class Physics {
         // Appliquer la gravité
         newVelocity.y += GRAVITY * deltaTime;
 
-        newPosition.x += newVelocity.x * deltaTime;
-        // Limiter la vitesse horizontale
-        newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
-
-        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-
-        float impactVelocity = newVelocity.y;
-        boolean wasGrounded = currentState.isGrounded();
-
-        // 1. ÉTAPE X : Traiter toutes les plateformes pour X
-        for (AABB platform : platforms) {
-            if(playerAABB.collidesWith(platform)) {
-                float overlapX = playerAABB.getOverlapX(platform);
-                float overlapY = playerAABB.getOverlapY(platform);
-                float tolerance = 0.01f;
-
-                if (overlapX < overlapY - tolerance) {
-                    // Traiter collision horizontale
-                    if (newVelocity.x > 0) {
-                        newVelocity.x = 0;
-                        newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
-                    } else if (newVelocity.x < 0) {
-                        newVelocity.x = 0;
-                        newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
-                    }
-                }
-            }
-        }
-
         // 2. ÉTAPE Y : Appliquer le mouvement Y puis tester toutes les plateformes
         newPosition.y += newVelocity.y * deltaTime;
-        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
 
         for (AABB platform : platforms) {
             if(playerAABB.collidesWith(platform)) {
@@ -77,6 +47,37 @@ public class Physics {
         if (isGrounded && !currentState.moveLeft() && !currentState.moveRight()) {
             float frictionRate = Math.abs(GRAVITY) * 0.30f; // 30% de la gravité
             newVelocity.x *= Math.max(0, 1.0f - frictionRate * deltaTime);
+        }
+        float currentVelocity = currentState.velocity().x;
+
+        newPosition.x += newVelocity.x * deltaTime;
+
+        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+
+        float impactVelocity = newVelocity.y;
+        boolean wasGrounded = currentState.isGrounded();
+        // Limiter la vitesse horizontale
+        if(isGrounded) newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
+        else newVelocity.x = Math.max(-maxSpeed * 2, Math.min(maxSpeed * 2, currentVelocity));
+
+        // 1. ÉTAPE X : Traiter toutes les plateformes pour X
+        for (AABB platform : platforms) {
+            if(playerAABB.collidesWith(platform)) {
+                float overlapX = playerAABB.getOverlapX(platform);
+                float overlapY = playerAABB.getOverlapY(platform);
+                float tolerance = 0.01f;
+
+                if (overlapX < overlapY - tolerance) {
+                    // Traiter collision horizontale
+                    if (newVelocity.x > 0) {
+                        newVelocity.x = 0;
+                        newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
+                    } else if (newVelocity.x < 0) {
+                        newVelocity.x = 0;
+                        newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
+                    }
+                }
+            }
         }
 
         return new PlayerState(

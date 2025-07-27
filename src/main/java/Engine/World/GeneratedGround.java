@@ -25,20 +25,10 @@ public class GeneratedGround {
 
             // Générer de bas en haut
             for (int y = 0; y <= surfaceHeight; y++) {
-                boolean shouldPlaceBlock = false;
-                if (y >= surfaceHeight - 2) {
-                    shouldPlaceBlock = true;
-                } else {
-                    float caveNoise = noise.fbm(worldX * 0.05f, 2, 12.0f, 0.1f);
-                    shouldPlaceBlock = caveNoise < 0.3f;
-                }
-
-                if (shouldPlaceBlock) {
                     generatedPlatforms.add(new AABB(
                             new Vector2f(worldX, y),
                             new Vector2f(0.5f, 0.5f)
                     ));
-                }
             }
         }
     }

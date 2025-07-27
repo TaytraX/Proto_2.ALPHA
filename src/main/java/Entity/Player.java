@@ -21,14 +21,8 @@ public class Player {
                                glfwGetKey(windowId, GLFW_KEY_W) == GLFW_PRESS;
 
         // Déterminez les mouvements en fonction de l'état au sol
-        boolean moveLeft = leftPressed && !rightPressed && state.isGrounded();
-        boolean moveRight = rightPressed && !leftPressed && state.isGrounded();
-
-        // Si le joueur n'est pas au sol, conservez la direction actuelle
-        if (!state.isGrounded()) {
-            moveLeft = state.moveLeft();
-            moveRight = state.moveRight();
-        }
+        boolean moveLeft = leftPressed && !rightPressed;
+        boolean moveRight = rightPressed && !leftPressed;
 
         boolean jump = jumpPressed && state.isGrounded();
 
