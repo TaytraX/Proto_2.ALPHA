@@ -54,6 +54,7 @@ public class Engine {
             PlayerState initialState = new PlayerState(
                     new Vector2f(0, 30),
                     new Vector2f(0, 0),
+                    new Vector2f(0, 0),
                     false,
                     false,
                     0.0f,

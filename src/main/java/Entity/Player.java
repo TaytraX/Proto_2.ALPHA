@@ -34,6 +34,7 @@ public class Player {
         return new PlayerState(
                 state.position(),
                 newVelocity,
+                state.jumpVelocity(),
                 state.isGrounded(),
                 state.wasGrounded(),
                 state.previousVelocity(),
