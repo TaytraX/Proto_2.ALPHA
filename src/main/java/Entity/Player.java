@@ -57,12 +57,12 @@ public class Player {
         if (moveLeft) {
             newVelocity.x -= move * deltaTime; // Limite gauche
         } else if (moveRight) {
-            newVelocity.x += move * deltaTime;  // Limite droite
+                newVelocity.x += move * deltaTime;  // Limite droite
         }
 
         // Saut inchangé
         if (jump) {
-            newVelocity.y += state.force() * deltaTime;
+            newVelocity.y = state.force();
         }
 
         return newVelocity;

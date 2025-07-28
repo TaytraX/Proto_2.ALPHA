@@ -6,7 +6,7 @@ import org.joml.Vector2f;
 import java.util.List;
 
 public class Physics {
-    public static final float GRAVITY = -8.00f;
+    public static final float GRAVITY = -12.00f;
 
     public PlayerState update(PlayerState currentState,  List<AABB> platforms, float deltaTime) {
         Vector2f newVelocity = new Vector2f(currentState.velocity());
@@ -14,7 +14,7 @@ public class Physics {
         boolean isGrounded = false;
 
         // Calcul de la vitesse max basée uniquement sur la gravité
-        float maxSpeed = (float) Math.sqrt(Math.abs(GRAVITY) * 3.0f);
+        float maxSpeed = (float) Math.sqrt(Math.abs(GRAVITY) * 9.0f) * currentState.force();
 
         // Appliquer la gravité
         newVelocity.y += GRAVITY * deltaTime;
@@ -43,20 +43,20 @@ public class Physics {
             }
         }
 
+        float impactVelocity = newVelocity.y;
+        boolean wasGrounded = currentState.isGrounded();
+
         // Décélération exponentielle basée sur la gravité
         if (isGrounded && !currentState.moveLeft() && !currentState.moveRight()) {
             float frictionRate = Math.abs(GRAVITY) * 0.30f; // 30% de la gravité
             newVelocity.x *= Math.max(0, 1.0f - frictionRate * deltaTime);
         }
 
-        newPosition.x += newVelocity.x * deltaTime;
-
-        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-
-        float impactVelocity = newVelocity.y;
-        boolean wasGrounded = currentState.isGrounded();
-
         newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
+        if (newVelocity.x < maxSpeed) {
+            newPosition.x += newVelocity.x * deltaTime;
+        }
+        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
 
         // 1. ÉTAPE X : Traiter toutes les plateformes pour X
         for (AABB platform : platforms) {
