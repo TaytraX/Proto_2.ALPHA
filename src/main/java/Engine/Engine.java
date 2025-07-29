@@ -28,7 +28,7 @@ public class Engine {
     private Physics physics;
     private long lastTime = System.currentTimeMillis();
     private float deltaTime = 0.000016f;
-    private Map<Integer, List<AABB>> worldChunks = new ConcurrentHashMap<>();
+    private final Map<Integer, List<AABB>> worldChunks = new ConcurrentHashMap<>();
     Random random = new Random();
     private final long seed = random.nextLong();
 
