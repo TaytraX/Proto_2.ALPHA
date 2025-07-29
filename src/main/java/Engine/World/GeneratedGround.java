@@ -20,8 +20,8 @@ public class GeneratedGround {
     private void generateChunk(int chunkX) {
         for (int localX = 0; localX < CHUNK_WIDTH; localX++) {
             int worldX = chunkX * CHUNK_WIDTH + localX;
-            float heightNoise = noise.fbm(worldX * 0.02f, 3, 2.0f, 0.1f);
-            int surfaceHeight = (int)(heightNoise * 15 + 25);
+            float heightNoise = noise.fbm(worldX * 0.02f, 1, 1.0f, 0.1f);
+            int surfaceHeight = (int)(heightNoise * 2 + 25);
 
             // Générer de bas en haut
             for (int y = -80; y <= surfaceHeight; y++) {

@@ -19,9 +19,9 @@ public class Physics {
 
         // Calcul de la vitesse max basée uniquement sur la gravité
         float maxSpeed = 45.0f / (float) Math.sqrt(Math.abs(GRAVITY));
-        newPosition.x += newVelocity.x * deltaTime;
 
         newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
+        newPosition.x += newVelocity.x * deltaTime;
         System.out.println("vitesse de joueur : " + newVelocity.x);
 
         AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
