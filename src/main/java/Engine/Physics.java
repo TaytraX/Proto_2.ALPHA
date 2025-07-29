@@ -7,7 +7,8 @@ import java.util.List;
 
 public class Physics {
     public static final float GRAVITY = -8.0f;
-    private static final float COLLISION_TOLERANCE = 0.5f;
+    private static final float X_COLLISION_TOLERANCE = 0.01f;
+    private static final float Y_COLLISION_TOLERANCE = 0.03f;
 
 
     public PlayerState update(PlayerState currentState,  List<AABB> platforms, float deltaTime) {
@@ -16,6 +17,34 @@ public class Physics {
         boolean isGrounded = false;
         Vector2f jumpVelocity = currentState.jumpVelocity();
 
+        // Calcul de la vitesse max basée uniquement sur la gravité
+        float maxSpeed = 45.0f / (float) Math.sqrt(Math.abs(GRAVITY));
+        newPosition.x += newVelocity.x * deltaTime;
+
+        newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
+        System.out.println("vitesse de joueur : " + newVelocity.x);
+
+        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+
+        // 1. ÉTAPE X : Traiter toutes les plateformes pour X
+
+        for (AABB platform : platforms) {
+            if(playerAABB.collidesWith(platform)) {
+                float overlapX = playerAABB.getOverlapX(platform);
+                float overlapY = playerAABB.getOverlapY(platform);
+
+                if (overlapX < overlapY - X_COLLISION_TOLERANCE) {
+                    // Traiter collision horizontale
+                    if (newVelocity.x > 0) {
+                        newVelocity.x = 0;
+                        newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
+                    } else if (newVelocity.x < 0) {
+                        newVelocity.x = 0;
+                        newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
+                    }
+                }
+            }
+        }
 
         // 2. ÉTAPE Y : Appliquer le mouvement Y puis tester toutes les plateformes
 
@@ -26,14 +55,14 @@ public class Physics {
         float impactVelocity = newVelocity.y;
         boolean wasGrounded = currentState.isGrounded();
 
-        AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
+        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
 
         for (AABB platform : platforms) {
             if(playerAABB.collidesWith(platform)) {
                 float overlapX = playerAABB.getOverlapX(platform);
                 float overlapY = playerAABB.getOverlapY(platform);
 
-                if (overlapY < overlapX - COLLISION_TOLERANCE) {
+                if (overlapY < overlapX - Y_COLLISION_TOLERANCE) {
                     // Traiter collision verticale
                     if (newVelocity.y < 0) {
                         newVelocity.y = 0;
@@ -42,33 +71,6 @@ public class Physics {
                     } else if (newVelocity.y > 0) {
                         newVelocity.y = 0;
                         newPosition.y = platform.getMinY() - PlayerState.PLAYER_SIZE.y;
-                    }
-                }
-            }
-        }
-        // Calcul de la vitesse max basée uniquement sur la gravité
-        float maxSpeed = 45.0f / (float) Math.sqrt(Math.abs(GRAVITY));
-        newPosition.x += newVelocity.x * deltaTime;
-
-        newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
-        System.out.println("vitesse de joueur : " + newVelocity.x);
-
-        playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
-
-        // 1. ÉTAPE X : Traiter toutes les plateformes pour X
-        for (AABB platform : platforms) {
-            if(playerAABB.collidesWith(platform)) {
-                float overlapX = playerAABB.getOverlapX(platform);
-                float overlapY = playerAABB.getOverlapY(platform);
-
-                if (overlapX < overlapY - COLLISION_TOLERANCE) {
-                    // Traiter collision horizontale
-                    if (newVelocity.x > 0) {
-                        newVelocity.x = 0;
-                        newPosition.x = platform.getMinX() - PlayerState.PLAYER_SIZE.x;
-                    } else if (newVelocity.x < 0) {
-                        newVelocity.x = 0;
-                        newPosition.x = platform.getMaxX() + PlayerState.PLAYER_SIZE.x;
                     }
                 }
             }
