@@ -10,7 +10,6 @@ public class GeneratedGround {
     private final Perlin noise;
 
     public static final int CHUNK_WIDTH = 16;
-    private static final int CHUNK_HEIGHT = 64;
 
     public GeneratedGround(long seed, int chunkX) {
         noise = new Perlin(seed);
@@ -36,13 +35,5 @@ public class GeneratedGround {
 
     public List<AABB> getPlatforms() {
         return generatedPlatforms;
-    }
-
-    public static int getChunkWidth() {
-        return CHUNK_WIDTH;
-    }
-
-    public static int getChunkHeight() {
-        return CHUNK_HEIGHT;
     }
 }
