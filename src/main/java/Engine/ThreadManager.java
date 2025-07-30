@@ -3,9 +3,10 @@ package Engine;
 import Engine.World.*;
 import Entity.PlayerState;
 
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static Engine.Engine.worldChunks;
 
 public class ThreadManager {
 
@@ -13,15 +14,35 @@ public class ThreadManager {
 
     public static final BlockingDeque<GroundGenRequest> platformGenQueue = new LinkedBlockingDeque<>();
 
-    public static final ConcurrentHashMap<Integer, List<AABB>> worldChunks = new ConcurrentHashMap<>();
+    public static ExecutorService platformGenerationExecutor;
 
-    public ExecutorService platformGenerationExecutor;
-
-    public ThreadManager() {
-
+    public static void initializer() {
         platformGenerationExecutor = Executors.newSingleThreadExecutor(r -> {
-            Thread thread = new Thread(r);
+            Thread thread = new Thread(r, "GroundGenThread");
+            thread.setDaemon(true);
             return thread;
         });
+
+        platformGenerationExecutor.submit(() -> {
+            while(!Thread.currentThread().isInterrupted()) {
+                try {
+                    GroundGenRequest request = platformGenQueue.take();
+
+                    GeneratedGround chunk = new GeneratedGround(request.seed(), request.chunkX());
+                    worldChunks.put(request.chunkX(), chunk.getPlatforms());
+                    GameLogger.debug("Chunk " + request.chunkX() + " chargé");
+                }catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
     }
+
+    public static void shutdown() {
+        if (platformGenerationExecutor != null) {
+            platformGenerationExecutor.shutdown();
+        }
+    }
+
 }
