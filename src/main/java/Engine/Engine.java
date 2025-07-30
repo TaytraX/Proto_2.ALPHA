@@ -1,6 +1,7 @@
 package Engine;
 
 import Engine.World.GeneratedGround;
+import Engine.World.GroundGenRequest;
 import Entity.AnimationState;
 import Entity.Camera;
 import Entity.Player;
@@ -84,6 +85,7 @@ public class Engine {
 
             Renderer = new Renderer();
             Renderer.initialize();
+            ThreadManager.initializer();
             camera = new Camera();
             player = new Player();
             physics = new Physics();
@@ -200,9 +202,10 @@ public class Engine {
 
     public void loadChunks(int chunkX) {
         if (!worldChunks.containsKey(chunkX)) {
-            GeneratedGround chunk = new GeneratedGround(seed, chunkX);
-            worldChunks.put(chunkX, chunk.getPlatforms());
-            GameLogger.info("Chunk " + chunkX + " chargé");
+            // ✅ Demander génération asynchrone
+            GroundGenRequest request = new GroundGenRequest(chunkX, seed);
+            ThreadManager.platformGenQueue.offer(request);
+            GameLogger.debug("Demande génération chunk " + chunkX);
         }
     }
 
@@ -231,6 +234,7 @@ public class Engine {
 
     public void cleanup() {
         Renderer.cleanUp();
+        ThreadManager.shutdown();
         window.cleanup();
         glfwTerminate();
     }
