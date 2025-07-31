@@ -11,7 +11,6 @@ public class Camera {
     private final Matrix4f projectionMatrix = new Matrix4f();
     private final Matrix4f viewMatrix = new Matrix4f();
 
-    // ✅ Paramètres de suivi
     private float followSpeed = 2.0f;        // Vitesse de suivi
     private final Vector2f offset = new Vector2f(0, 1.0f); // Décalage (joueur un peu en bas)
     private final Vector2f deadZone = new Vector2f(2.0f, 1.5f); // Zone morte
@@ -28,19 +27,19 @@ public class Camera {
 
         Vector2f playerPos = currentState.position();
 
-        // ✅ Position cible avec offset
+        // Position cible avec offset
         Vector2f targetPos = new Vector2f(
                 playerPos.x + offset.x,
                 playerPos.y + offset.y
         );
 
-        // ✅ Calcul de la distance
+        // Calcul de la distance
         Vector2f distance = new Vector2f(
                 targetPos.x - position.x,
                 targetPos.y - position.y
         );
 
-        // ✅ Dead zone : ne pas bouger si le joueur est proche du centre
+        // Dead zone : ne pas bouger si le joueur est proche du centre
         if (Math.abs(distance.x) > deadZone.x) {
             float moveX = distance.x > 0 ?
                     (distance.x - deadZone.x) :
@@ -56,7 +55,7 @@ public class Camera {
         }
     }
 
-    // ✅ Méthode pour téléporter (utile pour spawn/respawn)
+    // Méthode pour téléporter (utile pour spawn/respawn)
     public void snapToPlayer() {
         PlayerState currentState = ThreadManager.playerState.get();
         if (currentState == null) return;
@@ -94,19 +93,6 @@ public class Camera {
 
     public void resetFOV() {
         currentFOV = 1.0f;
-    }
-
-    // ✅ Configuration publique
-    public void setFollowSpeed(float speed) {
-        this.followSpeed = speed;
-    }
-
-    public void setOffset(float x, float y) {
-        this.offset.set(x, y);
-    }
-
-    public void setDeadZone(float x, float y) {
-        this.deadZone.set(x, y);
     }
 
     public Matrix4f getViewMatrix() {

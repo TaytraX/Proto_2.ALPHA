@@ -126,7 +126,6 @@ public class Engine {
 
         int playerChunkX = (int)(playerState.position().x / CHUNK_WIDTH);
 
-        // ✅ Utilise unloadChunk() au lieu de removeIf
         List<Integer> chunksToUnload = new ArrayList<>();
 
         for (Integer chunkX : worldChunks.keySet()) {
@@ -200,7 +199,7 @@ public class Engine {
 
     public void loadChunks(int chunkX) {
         if (!worldChunks.containsKey(chunkX)) {
-            // ✅ Demander génération asynchrone
+            // Demander génération asynchrone
             GroundGenRequest request = new GroundGenRequest(chunkX, seed);
             ThreadManager.platformGenQueue.offer(request);
             GameLogger.debug("Demande génération chunk " + chunkX);

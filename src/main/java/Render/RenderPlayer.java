@@ -73,7 +73,7 @@ public class RenderPlayer implements Renderable {
         int EBO = glGenBuffers();
         int textureVBO = glGenBuffers();
 
-        // ✅ Géométrie du joueur (quad 2D)
+        // Géométrie du joueur (quad 2D)
         float[] vertices = {
                -0.4f,  -0.6f,  // Bas gauche
                -0.4f,   0.6f,  // Haut gauche
