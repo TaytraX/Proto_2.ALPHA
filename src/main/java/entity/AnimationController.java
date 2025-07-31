@@ -1,4 +1,4 @@
-package Entity;
+package entity;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -20,12 +20,10 @@ public class AnimationController {
         for (int priority = 1; priority <= 4; priority++) {
             AnimationState newAnimation = checkAnimationsByPriority(currentState, priority);
             if (newAnimation != null) {
-
                 // Démarrer le timing si c'est une animation temporelle
                 if (newAnimation.hasFixedDuration() && newAnimation != previousAnimation) {
                     animationStartTimes.put(newAnimation, System.currentTimeMillis());
                 }
-
                 return newAnimation;
             }
         }

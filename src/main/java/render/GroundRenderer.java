@@ -1,10 +1,10 @@
-package Render;
+package render;
 
-import Engine.AABB;
-import Engine.Renderable;
-import Engine.GameLogger;
-import Entity.Camera;
-import Laucher.Main;
+import engine.AABB;
+import engine.Renderable;
+import engine.GameLogger;
+import entity.Camera;
+import laucher.Main;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL20C;
 import org.lwjgl.opengl.GL30C;

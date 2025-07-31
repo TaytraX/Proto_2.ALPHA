@@ -1,4 +1,4 @@
-package Engine.World;
+package engine.world;
 
 import java.util.Random;
 
@@ -39,7 +39,7 @@ public class Perlin {
 
     public float noise(float x) {
         int X = (int) Math.floor(x) & 255;
-        x -= Math.floor(x);
+        x -= (float) Math.floor(x);
         float u = fade(x);
         return lerp(u, grad(permutation[X], x), grad(permutation[X + 1], x - 1));
     }

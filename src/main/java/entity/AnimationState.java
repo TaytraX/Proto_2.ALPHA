@@ -1,4 +1,4 @@
-package Entity;
+package entity;
 
 public enum AnimationState {
     // Priorité 1 - Animations critiques (temporelles)
@@ -29,7 +29,6 @@ public enum AnimationState {
 
     public long getDuration() { return duration; }
     public boolean hasFixedDuration() { return duration > 0; }
-
     public int getPriority() {
         return priority;
     }

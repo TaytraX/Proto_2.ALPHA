@@ -1,8 +1,8 @@
-package Render;
+package render;
 
-import Engine.GameLogger;
-import Engine.Renderable;
-import Entity.Camera;
+import engine.GameLogger;
+import engine.Renderable;
+import entity.Camera;
 import org.lwjgl.opengl.GL30C;
 
 import java.nio.FloatBuffer;

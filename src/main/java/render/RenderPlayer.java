@@ -1,13 +1,13 @@
-package Render;
+package render;
 
-import Engine.AABB;
-import Engine.GameLogger;
-import Engine.Renderable;
-import Engine.ThreadManager;
-import Entity.AnimationController;
-import Entity.AnimationState;
-import Entity.Camera;
-import Entity.PlayerState;
+import engine.AABB;
+import engine.GameLogger;
+import engine.Renderable;
+import engine.ThreadManager;
+import entity.AnimationController;
+import entity.AnimationState;
+import entity.Camera;
+import entity.PlayerState;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
 

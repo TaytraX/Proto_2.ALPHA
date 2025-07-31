@@ -1,4 +1,4 @@
-package Render;
+package render;
 
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
@@ -18,8 +18,8 @@ public class Shader {
 
     public Shader(String shaderName) {
         try {
-            String vertexPath = "src/main/Ressources/shaders/" + shaderName + ".vs.glsl";
-            String fragmentPath = "src/main/Ressources/shaders/" + shaderName + ".fs.glsl";
+            String vertexPath = "src/main/resources/shaders/" + shaderName + ".vs.glsl";
+            String fragmentPath = "src/main/resources/shaders/" + shaderName + ".fs.glsl";
 
             String vertexSource = new String(Files.readAllBytes(Paths.get(vertexPath)));
             String fragmentSource = new String(Files.readAllBytes(Paths.get(fragmentPath)));

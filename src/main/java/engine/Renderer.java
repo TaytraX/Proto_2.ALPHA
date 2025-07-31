@@ -1,7 +1,7 @@
-package Engine;
+package engine;
 
-import Entity.Camera;
-import Render.*;
+import entity.Camera;
+import render.*;
 
 public class Renderer {
 

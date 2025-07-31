@@ -1,6 +1,6 @@
-package Entity;
+package entity;
 
-import Engine.AABB;
+import engine.AABB;
 import org.joml.Vector2f;
 
 public record PlayerState(

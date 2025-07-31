@@ -1,4 +1,6 @@
-package Engine.World;
+package engine.world;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Requête de génération de terrain pour un chunk spécifique.
@@ -9,9 +11,9 @@ package Engine.World;
  */
 public record GroundGenRequest(int chunkX, long seed) {
 
-    /**
-     * Validation des paramètres lors de la création
-     */
+
+    //  Validation des paramètres lors de la création
+
     public GroundGenRequest {
         // Validation optionnelle si nécessaire
         if (seed == 0) {
@@ -20,16 +22,7 @@ public record GroundGenRequest(int chunkX, long seed) {
     }
 
     /**
-     * Méthode utilitaire pour créer une requête pour un chunk adjacent
-     * @param offsetX décalage par rapport au chunk actuel
-     * @return nouvelle requête pour le chunk décalé
-     */
-    public GroundGenRequest offset(int offsetX) {
-        return new GroundGenRequest(chunkX + offsetX, seed);
-    }
-
-    /**
-     * Conversion vers coordonnée monde
+     * Conversion vers coordonnée-monde
      * @return position X de début du chunk dans les coordonnées monde
      */
     public float getWorldStartX() {
@@ -37,13 +30,14 @@ public record GroundGenRequest(int chunkX, long seed) {
     }
 
     /**
-     * Conversion vers coordonnée monde
+     * Conversion vers coordonnée-monde
      * @return position X de fin du chunk dans les coordonnées monde
      */
     public float getWorldEndX() {
         return (chunkX + 1) * GeneratedGround.CHUNK_WIDTH;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return String.format("GroundGenRequest{chunk=%d, seed=%d, worldRange=[%.1f-%.1f]}",

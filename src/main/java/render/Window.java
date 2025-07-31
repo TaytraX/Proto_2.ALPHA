@@ -1,6 +1,6 @@
-package Render;
+package render;
 
-import Laucher.Main;
+import laucher.Main;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -173,8 +173,8 @@ public class Window {
         return vSync;
     }
 
-    public long getWindowHandle() {
-        return window; // La variable long window de ta classe
+    public long getWindowID() {
+        return window; // La variable long window de la classe
     }
 
     public DisplayManager getDisplayManager() {

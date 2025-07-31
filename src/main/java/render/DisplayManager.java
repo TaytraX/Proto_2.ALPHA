@@ -1,4 +1,4 @@
-package Render;
+package render;
 
 import org.joml.Vector2f;
 import static org.lwjgl.opengl.GL11.*;
@@ -95,7 +95,6 @@ public class DisplayManager {
     // Getters pour la caméra
     public float getWorldWidth() { return TARGET_WIDTH / 64f; }  // Conversion en unités monde
     public float getWorldHeight() { return TARGET_HEIGHT / 64f; }
-    public Vector2f getRenderScale() { return new Vector2f(renderScale); }
     public ScaleMode getScaleMode() { return currentMode; }
     public void setScaleMode(ScaleMode mode) {
         this.currentMode = mode;

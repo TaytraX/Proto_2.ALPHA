@@ -1,6 +1,6 @@
-package Engine;
+package engine;
 
-import Entity.PlayerState;
+import entity.PlayerState;
 import org.joml.Vector2f;
 
 import java.util.List;

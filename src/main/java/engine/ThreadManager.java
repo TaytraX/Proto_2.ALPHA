@@ -1,12 +1,12 @@
-package Engine;
+package engine;
 
-import Engine.World.*;
-import Entity.PlayerState;
+import engine.world.*;
+import entity.PlayerState;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static Engine.Engine.worldChunks;
+import static engine.Engine.worldChunks;
 
 public class ThreadManager {
 

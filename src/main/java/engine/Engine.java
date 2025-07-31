@@ -1,13 +1,13 @@
-package Engine;
+package engine;
 
-import Engine.World.GroundGenRequest;
-import Entity.AnimationState;
-import Entity.Camera;
-import Entity.Player;
-import Entity.PlayerState;
-import Laucher.Main;
-import Render.DisplayManager;
-import Render.Window;
+import engine.world.GroundGenRequest;
+import entity.AnimationState;
+import entity.Camera;
+import entity.Player;
+import entity.PlayerState;
+import laucher.Main;
+import render.DisplayManager;
+import render.Window;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static Engine.World.GeneratedGround.CHUNK_WIDTH;
+import static engine.world.GeneratedGround.CHUNK_WIDTH;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 public class Engine {
@@ -78,13 +78,13 @@ public class Engine {
 
             window.init();
             DisplayManager display = window.getDisplayManager();
-            display.setScaleMode(DisplayManager.ScaleMode.LETTERBOX); // ou autre mode
+            display.setScaleMode(DisplayManager.ScaleMode.STRETCH); // ou autre mode
 
             Renderer = new Renderer();
             Renderer.initialize();
             ThreadManager.initializer();
             camera = new Camera();
-            player = new Player();
+            player = new Player(window.getWindowID());
             physics = new Physics();
 
             GameLogger.info("Composants créés");

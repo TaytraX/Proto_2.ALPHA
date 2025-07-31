@@ -19,6 +19,7 @@ out/
 .idea/tasks.xml
 .idea/dictionaries/
 .idea/shelf/
+qodana.yaml
 
 ### Eclipse ###
 .apt_generated

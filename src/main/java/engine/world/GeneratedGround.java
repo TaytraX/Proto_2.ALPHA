@@ -1,6 +1,6 @@
-package Engine.World;
+package engine.world;
 
-import Engine.AABB;
+import engine.AABB;
 import org.joml.Vector2f;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,5 @@
-package Entity;
+package entity;
 
-import Laucher.Main;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 
@@ -9,8 +8,8 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Player {
     public long windowId;
 
-    public Player() {
-        windowId = Main.getWindow().getWindowHandle();
+    public Player(long windowId) {
+        this.windowId = windowId;
     }
 
     public PlayerState update(@NotNull PlayerState state, float deltaTime) {
@@ -20,7 +19,7 @@ public class Player {
         boolean jumpPressed = glfwGetKey(windowId, GLFW_KEY_SPACE) == GLFW_PRESS ||
                                glfwGetKey(windowId, GLFW_KEY_W) == GLFW_PRESS;
 
-        // Déterminez les mouvements en fonction de l'état au sol
+        // Déterminez les mouvements en fonction de l'État au sol
         boolean moveLeft = leftPressed && !rightPressed;
         boolean moveRight = rightPressed && !leftPressed;
 

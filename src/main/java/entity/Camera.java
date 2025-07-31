@@ -1,8 +1,8 @@
-package Entity;
+package entity;
 
-import Engine.ThreadManager;
-import Laucher.Main;
-import Render.DisplayManager;
+import engine.ThreadManager;
+import laucher.Main;
+import render.DisplayManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -11,7 +11,6 @@ public class Camera {
     private final Matrix4f projectionMatrix = new Matrix4f();
     private final Matrix4f viewMatrix = new Matrix4f();
 
-    private float followSpeed = 2.0f;        // Vitesse de suivi
     private final Vector2f offset = new Vector2f(0, 1.0f); // Décalage (joueur un peu en bas)
     private final Vector2f deadZone = new Vector2f(2.0f, 1.5f); // Zone morte
     private float currentFOV = 3.0f;
@@ -40,6 +39,8 @@ public class Camera {
         );
 
         // Dead zone : ne pas bouger si le joueur est proche du centre
+        // Vitesse de suivi
+        float followSpeed = 2.0f;
         if (Math.abs(distance.x) > deadZone.x) {
             float moveX = distance.x > 0 ?
                     (distance.x - deadZone.x) :
@@ -53,18 +54,6 @@ public class Camera {
                     (distance.y + deadZone.y);
             position.y += moveY * followSpeed * deltaTime;
         }
-    }
-
-    // Méthode pour téléporter (utile pour spawn/respawn)
-    public void snapToPlayer() {
-        PlayerState currentState = ThreadManager.playerState.get();
-        if (currentState == null) return;
-
-        Vector2f playerPos = currentState.position();
-        this.position.set(
-                playerPos.x + offset.x,
-                playerPos.y + offset.y
-        );
     }
 
     public Matrix4f getProjectionMatrix() {

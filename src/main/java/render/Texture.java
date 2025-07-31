@@ -1,4 +1,4 @@
-package Render;
+package render;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
@@ -27,7 +27,7 @@ public class Texture {
 
         for (String ext : extensions) {
             try {
-                String path = "src/main/Ressources/textures/" + filename + ext;
+                String path = "src/main/resources/textures/" + filename + ext;
                 return loadTexture(path);
             } catch (Exception e) {
                 // Continue avec l'extension suivante

@@ -1,7 +1,7 @@
-package Laucher;
+package laucher;
 
-import Engine.Engine;
-import Render.Window;
+import engine.Engine;
+import render.Window;
 
 public class Main {
 
@@ -29,13 +29,5 @@ public class Main {
 
     public static Window getWindow() {
         return window;
-    }
-
-    public static int getWidth() {
-        return width;
-    }
-
-    public static int getHeight() {
-        return height;
     }
 }
