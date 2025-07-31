@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GeneratedGround {
-    private final List<AABB> generatedPlatforms = new ArrayList<>();
+    private final List<AABB> generatedGround = new ArrayList<>();
     private final Perlin noise;
 
     public static final int CHUNK_WIDTH = 16;
@@ -22,18 +22,20 @@ public class GeneratedGround {
             float heightNoise = noise.fbm(worldX * 0.02f, 1, 1.0f, 0.1f);
             int surfaceHeight = (int)(heightNoise * 2 + 25);
 
+            // Calculs pour UNE colonne
+            float columnHeight = surfaceHeight - (-80) + 1; // hauteur totale
+            float centerY = (-80 + surfaceHeight) / 2.0f;   // centre Y
+
             // Générer de bas en haut
-            for (int y = -80; y <= surfaceHeight; y++) {
-                    generatedPlatforms.add(new AABB(
-                            new Vector2f(worldX, y),
-                            new Vector2f(0.5f, 0.5f)
-                    ));
-            }
+            generatedGround.add(new AABB(
+                  new Vector2f(worldX, centerY),
+                  new Vector2f(0.5f, columnHeight / 2)
+            ));
         }
     }
 
 
     public List<AABB> getPlatforms() {
-        return generatedPlatforms;
+        return generatedGround;
     }
 }
