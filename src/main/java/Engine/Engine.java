@@ -40,7 +40,6 @@ public class Engine {
         GameLogger.info("Initialisation du moteur...");
 
         try {
-            // Vérification critique
             window = Main.getWindow();
             if(window == null) {
                 GameLogger.error("Window est null !", null);
@@ -98,7 +97,7 @@ public class Engine {
 
     private void generateInitialWorld() {
         // Générer 5 chunks autour du spawn (x=0)
-        for (int chunkX = -2; chunkX <= 2; chunkX++) {
+        for (int chunkX = -3; chunkX <= 3; chunkX++) {
             loadChunks(chunkX);
         }
         GameLogger.info("Monde initial généré : " + getTotalBlockCount() + " blocs");
@@ -108,15 +107,6 @@ public class Engine {
         if (worldChunks.remove(chunkX) != null) {
             GameLogger.debug("Chunk " + chunkX + " déchargé");
         }
-    }
-
-    // Méthode pour obtenir toutes les plateformes actives (pour la physique)
-    public List<AABB> getActivePlatforms() {
-        List<AABB> allPlatforms = new ArrayList<>();
-        for (List<AABB> chunkPlatforms : worldChunks.values()) {
-            allPlatforms.addAll(chunkPlatforms);
-        }
-        return allPlatforms;
     }
 
     // Décharger les chunks lointains pour économiser la mémoire
@@ -129,7 +119,7 @@ public class Engine {
         List<Integer> chunksToUnload = new ArrayList<>();
 
         for (Integer chunkX : worldChunks.keySet()) {
-            if (Math.abs(chunkX - playerChunkX) > 3) {
+            if (Math.abs(chunkX - playerChunkX) > 4) {
                 chunksToUnload.add(chunkX);
             }
         }
@@ -218,7 +208,7 @@ public class Engine {
         int playerChunkX = getChunkX(state.position().x);
         List<AABB> nearbyPlatforms = new ArrayList<>();
 
-        for (int chunkX = playerChunkX - 2; chunkX <= playerChunkX + 2; chunkX++) {
+        for (int chunkX = playerChunkX - 3; chunkX <= playerChunkX + 3; chunkX++) {
             loadChunks(chunkX);
 
             List<AABB> chunkPlatforms = worldChunks.get(chunkX);

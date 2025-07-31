@@ -22,7 +22,6 @@ public class Physics {
 
         newVelocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, newVelocity.x));
         newPosition.x += newVelocity.x * deltaTime;
-        System.out.println("vitesse de joueur : " + newVelocity.x);
 
         AABB playerAABB = new AABB(newPosition, PlayerState.PLAYER_SIZE);
 
