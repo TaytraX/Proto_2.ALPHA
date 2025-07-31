@@ -4,7 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class AnimationController {
-    // ✅ EnumMap pré-alloué très efficace pour les enums
+
     private final Map<AnimationState, Long> animationStartTimes = new EnumMap<>(AnimationState.class);
 
     public AnimationState processTransiteAnimation(PlayerState currentState, AnimationState previousAnimation) {

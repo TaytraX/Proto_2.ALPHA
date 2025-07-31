@@ -30,24 +30,22 @@ public class Shader {
             loadDefaultShader();
         }
 
-        if (shaderName.equals("background")) {
-            createUniform("time");
-            createUniform("resolution");
-        } else if (shaderName.equals("player")) {
-            createUniform("transformationMatrix");
-            createUniform("viewMatrix");
-            createUniform("projectionMatrix");
-            createUniform("textureSample");
-        }else if (shaderName.equals("platforms")) {
-            createUniform("transformationMatrix");
-            createUniform("viewMatrix");
-            createUniform("projectionMatrix");
-        }
-    }
-
-    public Shader(String vertexSource, String fragmentSource, boolean fromString) {
-        if (fromString) {
-            compile(vertexSource, fragmentSource);
+        switch (shaderName) {
+            case "background" -> {
+                createUniform("time");
+                createUniform("resolution");
+            }
+            case "player" -> {
+                createUniform("transformationMatrix");
+                createUniform("viewMatrix");
+                createUniform("projectionMatrix");
+                createUniform("textureSample");
+            }
+            case "platforms" -> {
+                createUniform("transformationMatrix");
+                createUniform("viewMatrix");
+                createUniform("projectionMatrix");
+            }
         }
     }
 
@@ -104,16 +102,6 @@ public class Shader {
             return;
         }
         glUniformMatrix4fv(location, false, matrix);
-    }
-
-    public void setUniform1i(String name, int value) {
-        int location = glGetUniformLocation(programID, name);
-        glUniform1i(location, value);
-    }
-
-    public void setUniform1f(String name, float value) {
-        int location = glGetUniformLocation(programID, name);
-        glUniform1f(location, value);
     }
 
     private void loadDefaultShader() {

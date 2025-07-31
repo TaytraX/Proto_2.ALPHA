@@ -81,7 +81,7 @@ public class Physics {
             newVelocity.x *= Math.max(0, 1.0f - frictionRate * deltaTime);
         }
 
-        // ✅ Capturer la vitesse au moment du saut
+        // Capturer la vitesse au moment du saut
         if (!currentState.isGrounded() && isGrounded) {
             // Le joueur vient d'atterrir, reset jumpVelocity
             jumpVelocity = null;
@@ -90,7 +90,7 @@ public class Physics {
             jumpVelocity = new Vector2f(newVelocity.x, 0); // Seulement X
         }
 
-        // ✅ Contrôle aérien basé sur la vitesse de saut
+        // réduction du contrôle aérien en simulant la loi de conserve du momentum
         if (!isGrounded && jumpVelocity != null) {
             float airControlFriction = Math.abs(GRAVITY) * 0.20f;
 
