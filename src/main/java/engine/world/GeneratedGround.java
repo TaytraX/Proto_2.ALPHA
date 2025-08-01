@@ -29,7 +29,7 @@ public class GeneratedGround {
             // Générer de bas en haut
             generatedGround.add(new AABB(
                   new Vector2f(worldX, centerY),
-                  new Vector2f(0.5f, columnHeight / 2)
+                  new Vector2f(1f, columnHeight / 2)
             ));
         }
     }
